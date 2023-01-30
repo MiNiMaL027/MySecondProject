@@ -5,9 +5,9 @@ namespace List_Dal.Interfaces
 {
     public interface IAutorizeRepository
     {
-        Task<User> FindLoginModel(LoginModel model, string hashed);
-        Task<User> FindRegisteModel(RegisterModel model);
-        Task<EmailConfirmationCode> GetEmailConfirmationCode(RegisterModel model,string hashed);
+        Task<User> FindLoginModel(string email, string hashed);
+        Task<User> FindRegisteModel(string email);
+        Task<EmailConfirmationCode> GetEmailConfirmationCode(string email, string password);
         Task RemoveCode(EmailConfirmationCode code);
         Task AddCode(EmailConfirmationCode code);
         Task<EmailConfirmationCode> GetEmailConfirmationCode(string pass, string email, string confirmationCode);

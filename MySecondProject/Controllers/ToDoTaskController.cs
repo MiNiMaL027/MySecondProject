@@ -1,4 +1,5 @@
-﻿using List_Domain.Models;
+﻿using List_Domain.CreateModel;
+using List_Domain.ModelDTO;
 using List_Service.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Query;
@@ -10,6 +11,7 @@ namespace MySecondProject.Controllers
     public class ToDoTaskController : Controller
     {
         private readonly IToDoTaskService _toDoTaskService;
+
         public ToDoTaskController(IToDoTaskService toDoTaskService)
         {
             _toDoTaskService = toDoTaskService;
@@ -21,6 +23,7 @@ namespace MySecondProject.Controllers
         {
                 int userId = Convert.ToInt32(HttpContext.User.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
                 IQueryable<ToDoTaskDTO> retrivalToDoTask = await _toDoTaskService.Get(userId);
+
                 return Ok(retrivalToDoTask);
         }
     
@@ -30,6 +33,7 @@ namespace MySecondProject.Controllers
             try
             {
                 int UserId = Convert.ToInt32(HttpContext.User.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
+
                 return Ok(await _toDoTaskService.Add(task, UserId));
             }
             catch(NotImplementedException)
@@ -48,21 +52,22 @@ namespace MySecondProject.Controllers
             try
             {
                 int userId = Convert.ToInt32(HttpContext.User.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
+
                 return Ok(_toDoTaskService.Remove(ids, userId));
             }
             catch(NotImplementedException)
             {
                 return NotFound(ids);
-            }
-            
+            }           
         }
 
         [HttpPut]
-        public async Task<ActionResult<int>> Update(CreateToDoTask task,int taskId)
+        public async Task<ActionResult<int>> Update(CreateToDoTask task, int taskId)
         {
             try
             {
                 int userId = Convert.ToInt32(HttpContext.User.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
+
                 return Ok(await _toDoTaskService.Update(task, userId,taskId));
             }
             catch(NotImplementedException)
@@ -73,7 +78,6 @@ namespace MySecondProject.Controllers
             {
                 return NotFound();
             }
-
         }
 
         [HttpPut("Complete")]
@@ -82,6 +86,7 @@ namespace MySecondProject.Controllers
             try
             {
                 int userId = Convert.ToInt32(HttpContext.User.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
+
                 return Ok(await _toDoTaskService.CompleteTask(id, userId));
             }
             catch (NullReferenceException)

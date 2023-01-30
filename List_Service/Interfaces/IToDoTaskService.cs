@@ -1,4 +1,5 @@
-﻿using List_Domain.Models;
+﻿using List_Domain.CreateModel;
+using List_Domain.ModelDTO;
 
 namespace List_Service.Interfaces
 {

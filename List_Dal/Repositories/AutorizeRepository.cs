@@ -24,20 +24,19 @@ namespace List_Dal.Repositories
             await db.SaveChangesAsync();
         }
 
-        public async Task<User?> FindRegisteModel(RegisterModel model)
+        public async Task<User?> FindRegisteModel(string email)
         {
-            return await dbSetUser.AsNoTracking().FirstOrDefaultAsync(u => u.Email == model.Email);
+            return await dbSetUser.AsNoTracking().FirstOrDefaultAsync(u => u.Email == email);
         }
 
-        public Task<EmailConfirmationCode?> GetEmailConfirmationCode(RegisterModel model, string hashed)
+        public Task<EmailConfirmationCode?> GetEmailConfirmationCode(string email,string password)
         {
-            return dbSetComfirmCode.FirstOrDefaultAsync(c => c.Email == model.Email && c.Password == model.Password);
+            return dbSetComfirmCode.FirstOrDefaultAsync(c => c.Email == email && c.Password == password);
         }
 
-
-        public async Task<User?> FindLoginModel(LoginModel model,string hashed)
+        public async Task<User?> FindLoginModel(string email,string hashed)
         {
-            return await dbSetUser.AsNoTracking().FirstOrDefaultAsync(d => d.Email == model.Email && d.Password == hashed);
+            return await dbSetUser.AsNoTracking().FirstOrDefaultAsync(d => d.Email == email && d.Password == hashed);
         }
 
         public async Task RemoveCode(EmailConfirmationCode code)
@@ -60,6 +59,7 @@ namespace List_Dal.Repositories
         {
             dbSetUser.Add(user);
             await db.SaveChangesAsync();
+
             return user.Id;
         }
 

@@ -1,6 +1,6 @@
-﻿using List_Domain.Models;
+﻿using List_Domain.CreateModel;
+using List_Domain.ModelDTO;
 using List_Service.Interfaces;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Query;
 
@@ -11,6 +11,7 @@ namespace MySecondProject.Controllers
     public class CustomListController : Controller
     {
         private readonly ICustomListService _customListResvice;
+
         public CustomListController(ICustomListService customListResvice)
         {
             _customListResvice = customListResvice;
@@ -22,6 +23,7 @@ namespace MySecondProject.Controllers
         {
             int userId = Convert.ToInt32(HttpContext.User.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
             IQueryable<CustomListDTO> retrivalCustomList = await _customListResvice.Get(userId);
+
             return Ok(retrivalCustomList);
         }
 
@@ -31,6 +33,7 @@ namespace MySecondProject.Controllers
             try
             {
                 int UserId = Convert.ToInt32(HttpContext.User.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
+
                 return Ok(await _customListResvice.Add(list,UserId));
             }
             catch(NotImplementedException)
@@ -49,6 +52,7 @@ namespace MySecondProject.Controllers
             try
             {
                 int userId = Convert.ToInt32(HttpContext.User.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
+
                 return Ok(_customListResvice.Remove(ids, userId));
             }
             catch(NotImplementedException)
@@ -58,11 +62,12 @@ namespace MySecondProject.Controllers
         }
 
         [HttpPut]
-        public async Task<ActionResult<int>> Update(CreateCustomList list,int listID)
+        public async Task<ActionResult<int>> Update(CreateCustomList list, int listID)
         {
             try
             {
                 int userId = Convert.ToInt32(HttpContext.User.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
+
                 return Ok(await _customListResvice.Update(list, userId,listID));
             }
             catch(NotImplementedException)

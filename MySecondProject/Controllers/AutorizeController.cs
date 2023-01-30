@@ -1,8 +1,8 @@
-﻿using List_Domain.Models;
-using List_Domain.Models.NotDbEntity;
+﻿using List_Domain.Models.NotDbEntity;
 using Microsoft.AspNetCore.Mvc;
 using List_Service.Interfaces;
 using MySecondProject.Filters;
+using List_Domain.ModelDTO;
 
 namespace MySecondProject.Controllers
 {
@@ -10,10 +10,12 @@ namespace MySecondProject.Controllers
     public class AutorizeController : Controller
     {
         private readonly IAutorizeService _service;
+
         public AutorizeController(IAutorizeService service)
         {
             _service= service;
         }      
+
         [HttpPost("login")]
         public async Task<ActionResult<UserDTO>> Login(LoginModel model)
         {
@@ -31,6 +33,7 @@ namespace MySecondProject.Controllers
         {
             string pass = HttpContext.User.Claims.FirstOrDefault(c => c.Type == "TempPass").Value;
             string email = HttpContext.User.Identity.Name;
+
             return Ok(await _service.SendConfCode(confirmationCode, pass, email));
         }
     }

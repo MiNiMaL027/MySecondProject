@@ -9,6 +9,7 @@ namespace List_Dal
         public DbSet<CustomList> CustomLists { get; set; }
         public DbSet<ToDoTask> ToDoTasks { get; set; }
         public DbSet<EmailConfirmationCode> EmailConfirmationCodes { get; set; }
+
         public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options) 
         {
             Database.Migrate();
