@@ -1,5 +1,5 @@
 ﻿using List_Domain.CreateModel;
-using List_Domain.ModelDTO;
+using List_Domain.ViewModel;
 using List_Service.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Query;
@@ -19,10 +19,10 @@ namespace MySecondProject.Controllers
 
         [HttpGet]
         [EnableQuery]
-        public async Task<ActionResult<IQueryable<CustomListDTO>>> Get()
+        public async Task<ActionResult<IQueryable<CustomListView>>> Get()
         {
-            int userId = Convert.ToInt32(HttpContext.User.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
-            IQueryable<CustomListDTO> retrivalCustomList = await _customListResvice.Get(userId);
+            var userId = Convert.ToInt32(HttpContext.User.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
+            IQueryable<CustomListView> retrivalCustomList = await _customListResvice.Get(userId);
 
             return Ok(retrivalCustomList);
         }
@@ -32,9 +32,9 @@ namespace MySecondProject.Controllers
         {
             try
             {
-                int UserId = Convert.ToInt32(HttpContext.User.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
+                var userId = Convert.ToInt32(HttpContext.User.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
 
-                return Ok(await _customListResvice.Add(list,UserId));
+                return Ok(await _customListResvice.Add(list,userId));
             }
             catch(NotImplementedException)
             {
@@ -51,7 +51,7 @@ namespace MySecondProject.Controllers
         {
             try
             {
-                int userId = Convert.ToInt32(HttpContext.User.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
+                var userId = Convert.ToInt32(HttpContext.User.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
 
                 return Ok(_customListResvice.Remove(ids, userId));
             }
@@ -66,7 +66,7 @@ namespace MySecondProject.Controllers
         {
             try
             {
-                int userId = Convert.ToInt32(HttpContext.User.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
+                var userId = Convert.ToInt32(HttpContext.User.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
 
                 return Ok(await _customListResvice.Update(list, userId,listID));
             }

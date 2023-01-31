@@ -1,4 +1,5 @@
 ﻿using AcumaticaExternalAppServer;
+using AutoMapper;
 using List_Dal.Interfaces;
 using List_Domain.ModelDTO;
 using List_Domain.Models;
@@ -11,8 +12,10 @@ namespace List_Service.Services
     public class AutorizeService : IAutorizeService
     {
         private readonly IAutorizeRepository _repository;
-        public AutorizeService(IAutorizeRepository repository)
+        private readonly IMapper _mapper;
+        public AutorizeService(IAutorizeRepository repository, IMapper mapper)
         {
+            _mapper= mapper;
             _repository = repository;
         }
 
@@ -24,7 +27,7 @@ namespace List_Service.Services
             if (u == null)
                 throw new Exception("User does not exist");
 
-            var uDTO = new UserDTO(u);
+            var uDTO = _mapper.Map<UserDTO>(u);
             uDTO.EncodedJwt = AuthOptions.GetUserToken(u);
 
             return uDTO;                      
@@ -97,7 +100,7 @@ namespace List_Service.Services
                 throw new Exception("Your confirmation code has expired. Pass registration again");
             }
 
-            User newUser = new User()
+            var newUser = new User()
             {
                 Email = email,
                 Password = pass,
@@ -110,7 +113,7 @@ namespace List_Service.Services
 
             await _repository.RemoveFewCode(emailConfirmationCodesToDelete);
 
-            var userDTO = new UserDTO(newUser);
+            var userDTO = _mapper.Map<UserDTO>(newUser);
             userDTO.EncodedJwt = AuthOptions.GetUserToken(newUser);
 
             return userDTO;

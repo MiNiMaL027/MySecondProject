@@ -1,6 +1,8 @@
-﻿namespace List_Domain.Models
+﻿using List_Domain.Models;
+
+namespace List_Domain.ViewModel
 {
-    public class ToDoTask
+    public class ToDoTaskView
     {
         public int Id { get; set; }
         public Importance? Importance { get; set; }
@@ -12,15 +14,6 @@
         public bool IsFavorite { get; set; }
         public bool IsDeleted { get; set; }
         public int? CustomListId { get; set; }
-        public CustomList? CustomList { get; set; }
         public int UserId { get; set; }
-        public User User { get; set; }
     }
-}
-
-public enum Importance
-{
-    Low,
-    Normal,
-    High
 }

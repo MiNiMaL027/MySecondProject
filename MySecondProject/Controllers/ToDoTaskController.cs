@@ -1,5 +1,5 @@
 ﻿using List_Domain.CreateModel;
-using List_Domain.ModelDTO;
+using List_Domain.ViewModel;
 using List_Service.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Query;
@@ -19,12 +19,12 @@ namespace MySecondProject.Controllers
 
         [HttpGet]
         [EnableQuery]
-        public async Task<ActionResult<IQueryable<ToDoTaskDTO>>> Get()
+        public async Task<ActionResult<IQueryable<ToDoTaskView>>> Get()
         {
-                int userId = Convert.ToInt32(HttpContext.User.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
-                IQueryable<ToDoTaskDTO> retrivalToDoTask = await _toDoTaskService.Get(userId);
+            var userId = Convert.ToInt32(HttpContext.User.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
+            IQueryable<ToDoTaskView> retrivalToDoTask = await _toDoTaskService.Get(userId);
 
-                return Ok(retrivalToDoTask);
+            return Ok(retrivalToDoTask);
         }
     
         [HttpPost]
@@ -32,7 +32,7 @@ namespace MySecondProject.Controllers
         {
             try
             {
-                int UserId = Convert.ToInt32(HttpContext.User.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
+                var UserId = Convert.ToInt32(HttpContext.User.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
 
                 return Ok(await _toDoTaskService.Add(task, UserId));
             }
@@ -51,7 +51,7 @@ namespace MySecondProject.Controllers
         {
             try
             {
-                int userId = Convert.ToInt32(HttpContext.User.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
+                var userId = Convert.ToInt32(HttpContext.User.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
 
                 return Ok(_toDoTaskService.Remove(ids, userId));
             }
@@ -66,7 +66,7 @@ namespace MySecondProject.Controllers
         {
             try
             {
-                int userId = Convert.ToInt32(HttpContext.User.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
+                var userId = Convert.ToInt32(HttpContext.User.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
 
                 return Ok(await _toDoTaskService.Update(task, userId,taskId));
             }
@@ -85,7 +85,7 @@ namespace MySecondProject.Controllers
         {
             try
             {
-                int userId = Convert.ToInt32(HttpContext.User.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
+                var userId = Convert.ToInt32(HttpContext.User.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
 
                 return Ok(await _toDoTaskService.CompleteTask(id, userId));
             }

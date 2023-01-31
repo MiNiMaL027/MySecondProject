@@ -1,8 +1,9 @@
-﻿using List_Dal.Interfaces;
+﻿using AutoMapper;
+using List_Dal.Interfaces;
 using List_Domain.CreateModel;
 using List_Domain.Exeptions;
-using List_Domain.ModelDTO;
 using List_Domain.Models;
+using List_Domain.ViewModel;
 using List_Service.Interfaces;
 
 namespace List_Service.Services
@@ -10,8 +11,11 @@ namespace List_Service.Services
     public class ToDoTaskService : IToDoTaskService
     {
         private readonly IToDoTaskRepository _todoTaskRepository;
-        public ToDoTaskService(IToDoTaskRepository toDoTaskRepository)
+        private readonly IMapper _mapper;
+
+        public ToDoTaskService(IToDoTaskRepository toDoTaskRepository, IMapper mapper)
         {
+            _mapper = mapper;
             _todoTaskRepository = toDoTaskRepository;
         }
 
@@ -25,7 +29,9 @@ namespace List_Service.Services
             if (!ValidOptions.ValidOptions.ValidName(item.Title))
                 throw new ValidProblemException($"{item.Title} - Not valide");
 
-            var itemToDb = new ToDoTask(item, userId);
+            var itemToDb = _mapper.Map<ToDoTask>(item);
+            itemToDb.UserId = userId;
+            itemToDb.CreationDate = DateTime.Now;
 
             await _todoTaskRepository.Add(itemToDb);
 
@@ -37,11 +43,11 @@ namespace List_Service.Services
             return await _todoTaskRepository.CompleteTask(id, userId);
         }
 
-        public async Task<IQueryable<ToDoTaskDTO>> Get(int userId)
+        public async Task<IQueryable<ToDoTaskView>> Get(int userId)
         {
             var items = await _todoTaskRepository.Get(userId);
 
-            return items.ToList().Select(x => new ToDoTaskDTO(x)).AsQueryable();
+            return items.ToList().Select(x => _mapper.Map<ToDoTaskView>(x)).AsQueryable();
         }
 
         public async Task<List<int>> Remove(List<int> ids, int uresId)
@@ -59,7 +65,9 @@ namespace List_Service.Services
             if (!ValidOptions.ValidOptions.ValidName(item.Title))
                 throw new ValidProblemException($"{item.Title} - Not valide");
 
-            var itemToDb = new ToDoTask(item, userId, taskId);
+            var itemToDb = _mapper.Map<ToDoTask>(item);
+            itemToDb.Id = taskId;
+            itemToDb.UserId = userId;
 
             if (!await _todoTaskRepository.Update(itemToDb, userId))
                 throw new NotFoundException($"{taskId} - Not found");

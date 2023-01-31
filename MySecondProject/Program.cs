@@ -1,6 +1,10 @@
+using AutoMapper;
 using List_Dal;
 using List_Dal.Interfaces;
 using List_Dal.Repositories;
+using List_Service.Mapper;
+using List_Domain.ModelDTO;
+using List_Domain.Models;
 using List_Service.Interfaces;
 using List_Service.Services;
 using List_Service.Services.ValidOptions;
@@ -19,7 +23,8 @@ namespace MySecondProject
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-
+            builder.Services.AddAutoMapper(typeof(AppMappingProfile).Assembly); //this will scan entire assembly for profiles
+            builder.Services.AddControllersWithViews();
             builder.Services.AddControllers(options=>
             options.Filters.Add(typeof(NotImplExceptionFilterAttribute)))
                 .AddOData(options => options.Select().OrderBy().Filter().SkipToken().SetMaxTop(10));
@@ -28,6 +33,7 @@ namespace MySecondProject
             builder.Services.AddScoped<ICustomListRepository, CustomListRepository>();
             builder.Services.AddScoped<ICustomListService, CustomListService>();
             builder.Services.AddScoped<IToDoTaskService, ToDoTaskService>();
+            builder.Services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
             builder.Services.AddSingleton<ValidOptions>();
     
             builder.Services.AddSwaggerGen(options =>
