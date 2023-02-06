@@ -1,8 +1,8 @@
-﻿using List_Domain.Models;
+﻿using List_Domain.Models; // лишнє
 
 namespace List_Domain.ViewModel
 {
-    public class ToDoTaskView
+    public class ToDoTaskView // ВюМодел
     {
         public int Id { get; set; }
         public Importance? Importance { get; set; }

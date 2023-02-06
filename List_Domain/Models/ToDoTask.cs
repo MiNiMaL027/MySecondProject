@@ -18,7 +18,7 @@
     }
 }
 
-public enum Importance
+public enum Importance // енамок це теж стосується, окремий файл, ЗАВЖДИ І ВСЮДИ, і я б назвав це Пріоріті а не Імпортансе 
 {
     Low,
     Normal,

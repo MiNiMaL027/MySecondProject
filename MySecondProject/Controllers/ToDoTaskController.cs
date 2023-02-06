@@ -21,7 +21,7 @@ namespace MySecondProject.Controllers
         [EnableQuery]
         public async Task<ActionResult<IQueryable<ToDoTaskView>>> Get()
         {
-            var userId = Convert.ToInt32(HttpContext.User.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
+            var userId = Convert.ToInt32(HttpContext.User.Claims.FirstOrDefault(c => c.Type == "UserId").Value); //АААААА
             IQueryable<ToDoTaskView> retrivalToDoTask = await _toDoTaskService.Get(userId);
 
             return Ok(retrivalToDoTask);

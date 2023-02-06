@@ -3,7 +3,7 @@ using List_Dal;
 using List_Dal.Interfaces;
 using List_Dal.Repositories;
 using List_Service.Mapper;
-using List_Domain.ModelDTO;
+using List_Domain.ModelDTO; // видали лишнє
 using List_Domain.Models;
 using List_Service.Interfaces;
 using List_Service.Services;
@@ -20,7 +20,7 @@ namespace MySecondProject
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static void Main(string[] args) // розділи це все пустими лінійками по логічних групах
         {
             var builder = WebApplication.CreateBuilder(args);
             builder.Services.AddAutoMapper(typeof(AppMappingProfile).Assembly); //this will scan entire assembly for profiles

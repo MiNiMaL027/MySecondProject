@@ -29,7 +29,7 @@ namespace List_Service.Services.ValidOptions
             var now = DateTime.UtcNow;
             var jwt = new JwtSecurityToken(
             issuer: AuthOptions.ISSUER,
-            audience: AuthOptions.AUDIENCE,
+            audience: AuthOptions.AUDIENCE, // в чому прикол що воно зїхало?
                     notBefore: now,
                     claims: identity.Claims,
                     expires: now.Add(TimeSpan.FromMinutes(AuthOptions.LIFETIME_MINUTES)),
@@ -48,12 +48,12 @@ namespace List_Service.Services.ValidOptions
                     new Claim("UserId", user.Id.ToString())
             };
 
-            ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims, "Token", ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);
+            ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims, "Token", ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType); // вар
 
             return claimsIdentity;
         }
 
-        public class PasswordHashing
+        public class PasswordHashing // НОВИЙ ФАЙЛ 
         {
             public static string GetHashedPassword(string password)
             {
@@ -76,7 +76,7 @@ namespace List_Service.Services.ValidOptions
         {
             Random rnd = new Random();
             char[] confirmationCodeChar = new char[8];
-            for (int i = 0; i < confirmationCodeChar.Length; ++i)
+            for (int i = 0; i < confirmationCodeChar.Length; ++i) 
             {
                 confirmationCodeChar[i] = Convert.ToString(rnd.Next(10))[0];
             }
@@ -104,7 +104,7 @@ namespace List_Service.Services.ValidOptions
             var now = DateTime.UtcNow;
             var jwt = new JwtSecurityToken(
             issuer: AuthOptions.ISSUER,
-            audience: AuthOptions.AUDIENCE,
+            audience: AuthOptions.AUDIENCE, // і тут чомусь зїхало
                     notBefore: now,
                     claims: identity.Claims,
                     expires: now.Add(TimeSpan.FromMinutes(AuthOptions.LIFETIME_MINUTES)),

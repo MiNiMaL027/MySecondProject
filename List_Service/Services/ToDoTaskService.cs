@@ -21,7 +21,7 @@ namespace List_Service.Services
 
         public async Task<int> Add(CreateToDoTask item, int userId)
         {
-            item.Title.Trim();
+            item.Title.Trim(); // АААААААААААААААААААААААААААА
 
             if (await _todoTaskRepository.CheckIfNameExist(item.Title, userId))
                 throw new ValidProblemException($"{item.Title} - This name is used");
@@ -30,7 +30,7 @@ namespace List_Service.Services
                 throw new ValidProblemException($"{item.Title} - Not valide");
 
             var itemToDb = _mapper.Map<ToDoTask>(item);
-            itemToDb.UserId = userId;
+            itemToDb.UserId = userId; // не має бути переданим
             itemToDb.CreationDate = DateTime.Now;
 
             await _todoTaskRepository.Add(itemToDb);
@@ -57,7 +57,7 @@ namespace List_Service.Services
 
         public async Task<int> Update(CreateToDoTask item, int userId, int taskId)
         {          
-            item.Title.Trim();
+            item.Title.Trim(); // ААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААА
 
             if (await _todoTaskRepository.CheckIfNameExist(item.Title, userId))
                 throw new ValidProblemException($"{item.Title} - This name is used");

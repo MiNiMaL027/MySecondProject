@@ -28,7 +28,7 @@ namespace List_Dal.Repositories
             return await dbSet.AnyAsync(i => i.Title == title && i.UserId == userId);
         }
 
-        public async Task<bool> CompleteTask(int id, int userId)
+        public async Task<bool> CompleteTask(int id, int userId) // Юзер айді безполєзнге
         {
             var task = await dbSet.FirstOrDefaultAsync(i => !i.IsDeleted && i.UserId == userId && i.Id == id);
 
@@ -37,29 +37,29 @@ namespace List_Dal.Repositories
 
             if (!task.IsCompleted)
             {
-                task.IsDeleted= true;
+                task.IsDeleted= true; // пробіл провтикав, хто сказав що при комлішені воно має видаляти?)) не треба так
                 task.IsCompleted = true;
 
                 return true;
             }
 
             return false;
-                
+                //лишній рядок
         }
 
-        public async Task<IQueryable<ToDoTask>> Get(int userId)
+        public async Task<IQueryable<ToDoTask>> Get(int userId)// гет підкреслений, прочитай і виправи
         {
-            return dbSet.Where(i => i.UserId == userId && !i.IsDeleted).AsQueryable();
+            return dbSet.Where(i => i.UserId == userId && !i.IsDeleted).AsQueryable();// прикалуєшся?) нашо тут айкверіабл?
         }
 
-        public async Task<List<int>> Remove(List<int> ids, int userId)
+        public async Task<List<int>> Remove(List<int> ids, int userId) // ЮзерАйді
         {
-            var items = await dbSet.Where(i => ids.Contains(i.Id) && i.UserId == userId && !i.IsDeleted).ToListAsync();
+            var items = await dbSet.Where(i => ids.Contains(i.Id) && i.UserId == userId && !i.IsDeleted).ToListAsync();// нашо тут туЛіст? не треба чим довше воно Кверя тим краще
 
-            if (items == null)
+            if (items == null) // не буде працювати, воно буде повертати пустий ліст, а не налл
                 throw new NotFoundException($"{ids} - any from this id not found");
 
-            for (int i = 0; i < items.Count; i++)
+            for (int i = 0; i < items.Count; i++) // я вже десь написав, форіч а не фор, або лінкю в один рядок
             {
                 items[i].IsDeleted = true;
             }
@@ -69,7 +69,7 @@ namespace List_Dal.Repositories
             return items.Select(i => i.Id).ToList();
         }
 
-        public async Task<bool> Update(ToDoTask item, int userId)
+        public async Task<bool> Update(ToDoTask item, int userId) // юзер айді
         {
             if (item == null)
                 throw new NullReferenceException();

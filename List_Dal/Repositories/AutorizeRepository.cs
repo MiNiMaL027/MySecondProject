@@ -5,68 +5,72 @@ using Microsoft.EntityFrameworkCore;
 
 namespace List_Dal.Repositories
 {
-    public  class AutorizeRepository : IAutorizeRepository
+    public  class AutorizeRepository : IAutorizeRepository // питань нема, це все зв*язане з авторизацією, АЛЕ одна ететя - один репозиторій, окремо юзерв, окремо конфірмейшинКодів
     {
-        ApplicationContext db;
-        DbSet<User> dbSetUser;
-        DbSet<EmailConfirmationCode> dbSetComfirmCode;
+        ApplicationContext _db;
+       /* DbSet<User> _dbSetUser;
+        DbSet<EmailConfirmationCode> _dbSetComfirmCode;*/
 
         public AutorizeRepository(ApplicationContext context)
         {
-            db = context;
-            dbSetUser = db.Set<User>();
-            dbSetComfirmCode= db.Set<EmailConfirmationCode>();
+            _db = context;
+            // лишній код
+           /* dbSetUser = db.Set<User>();
+            dbSetComfirmCode= db.Set<EmailConfirmationCode>();*/
         }
 
         public async Task AddCode(EmailConfirmationCode code)
         {
-            dbSetComfirmCode.Add(code);
-            await db.SaveChangesAsync();
+            _db.EmailConfirmationCodes.Add(code);
+            await _db.SaveChangesAsync();
         }
 
-        public async Task<User?> FindRegisteModel(string email)
+        public async Task<User?> FindRegisteModel(string email) // мені ця назва нічого не говорить, маєй бути грозуміло, ГетЮзерБайІмейл
         {
-            return await dbSetUser.AsNoTracking().FirstOrDefaultAsync(u => u.Email == email);
+            return await _db.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Email == email);
         }
 
-        public Task<EmailConfirmationCode?> GetEmailConfirmationCode(string email,string password)
+        public Task<EmailConfirmationCode?> GetEmailConfirmationCode(string email,string password) // коми
         {
-            return dbSetComfirmCode.FirstOrDefaultAsync(c => c.Email == email && c.Password == password);
+            return _db.EmailConfirmationCodes.FirstOrDefaultAsync(c => c.Email == email && c.Password == password); // де авейт??
         }
 
-        public async Task<User?> FindLoginModel(string email,string hashed)
+        public async Task<User?> FindLoginModel(string email,string hashed) // КОМИ
         {
-            return await dbSetUser.AsNoTracking().FirstOrDefaultAsync(d => d.Email == email && d.Password == hashed);
+            return await _db.Users.AsNoTracking().FirstOrDefaultAsync(d => d.Email == email && d.Password == hashed);
         }
 
         public async Task RemoveCode(EmailConfirmationCode code)
         {
-            dbSetComfirmCode.Remove(code);
-            await db.SaveChangesAsync();
+            _db.EmailConfirmationCodes.Remove(code);
+
+            await _db.SaveChangesAsync();
         }
 
         public async Task<EmailConfirmationCode?> GetEmailConfirmationCode(string pass, string email, string confirmationCode)
         {
-            return await dbSetComfirmCode.FirstOrDefaultAsync(e => e.Email == email && e.Password == pass && e.ConfirmationCode == confirmationCode);
+            return await _db.EmailConfirmationCodes.FirstOrDefaultAsync(e => e.Email == email && e.Password == pass && e.ConfirmationCode == confirmationCode);
         }
 
         public async Task<List<EmailConfirmationCode>> GetAllEmailConfirmationCodes(string pass, string email)
         {
-            return await dbSetComfirmCode.Where(e => e.Email == email && e.Password == pass).ToListAsync();
+            return await _db.EmailConfirmationCodes.Where(e => e.Email == email && e.Password == pass).ToListAsync();
         }
 
         public async Task<int> AddUser(User user)
         {
-            dbSetUser.Add(user);
-            await db.SaveChangesAsync();
+            _db.Users.Add(user);
+
+            await _db.SaveChangesAsync();
 
             return user.Id;
         }
 
-        public async Task RemoveFewCode(List<EmailConfirmationCode> Codes)
+        public async Task RemoveFewCode(List<EmailConfirmationCode> Codes) // велика буква в параметрі? серйозно?)
         {
-            dbSetComfirmCode.RemoveRange(Codes);
-            await db.SaveChangesAsync();
+            _db.EmailConfirmationCodes.RemoveRange(Codes);
+
+            await _db.SaveChangesAsync();
         }     
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace List_Domain.Exeptions
 {
-    public class NotFoundException : Exception
+    public class NotFoundException : Exception // ПОГАНОО, один клас, один файл
     {
         public NotFoundException(string message) : base(message) { }
 

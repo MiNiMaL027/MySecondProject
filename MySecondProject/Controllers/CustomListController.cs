@@ -21,7 +21,7 @@ namespace MySecondProject.Controllers
         [EnableQuery]
         public async Task<ActionResult<IQueryable<CustomListView>>> Get()
         {
-            var userId = Convert.ToInt32(HttpContext.User.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
+            var userId = Convert.ToInt32(HttpContext.User.Claims.FirstOrDefault(c => c.Type == "UserId").Value); // НІ
             IQueryable<CustomListView> retrivalCustomList = await _customListResvice.Get(userId);
 
             return Ok(retrivalCustomList);
@@ -30,7 +30,7 @@ namespace MySecondProject.Controllers
         [HttpPost]
         public async Task<ActionResult<int>> Add(CreateCustomList list)
         {
-            try
+            try // Запхай в мідлФеа весь ексепш хендлінг, і підключи глобально  https://enlear.academy/global-exception-handling-in-net-6-16908fc8dc28
             {
                 var userId = Convert.ToInt32(HttpContext.User.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
 
@@ -47,11 +47,11 @@ namespace MySecondProject.Controllers
         }
 
         [HttpDelete]
-        public async Task<ActionResult<List<int>>> Delete(List<int> ids)
+        public async Task<ActionResult<List<int>>> Delete(List<int> ids) // нема аейту, нафіга таск?
         {
             try
             {
-                var userId = Convert.ToInt32(HttpContext.User.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
+                var userId = Convert.ToInt32(HttpContext.User.Claims.FirstOrDefault(c => c.Type == "UserId").Value); //АААА
 
                 return Ok(_customListResvice.Remove(ids, userId));
             }

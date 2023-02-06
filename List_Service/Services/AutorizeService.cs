@@ -12,10 +12,10 @@ namespace List_Service.Services
     public class AutorizeService : IAutorizeService
     {
         private readonly IAutorizeRepository _repository;
-        private readonly IMapper _mapper;
+        private readonly IMapper _mapper;// пуста лінійка
         public AutorizeService(IAutorizeRepository repository, IMapper mapper)
         {
-            _mapper= mapper;
+            _mapper= mapper; // пробіл
             _repository = repository;
         }
 
@@ -23,11 +23,11 @@ namespace List_Service.Services
         {
             var hashed = AuthOptions.PasswordHashing.GetHashedPassword(model.Password);
 
-            var u = await _repository.FindLoginModel(model.Email,hashed);
+            var u = await _repository.FindLoginModel(model.Email,hashed); //яке ю?))ти смієшся? одна буква? де коми між параметрами?
             if (u == null)
                 throw new Exception("User does not exist");
 
-            var uDTO = _mapper.Map<UserDTO>(u);
+            var uDTO = _mapper.Map<UserDTO>(u); // по бест практісам краще не писати великі буваи в ряд, якщо це абривіатура, то тільки перша бува велика, тобто ЮзерДто
             uDTO.EncodedJwt = AuthOptions.GetUserToken(u);
 
             return uDTO;                      
@@ -35,10 +35,10 @@ namespace List_Service.Services
 
         public async Task<string> Register(RegisterModel model)
         {
-            var user = await _repository.FindRegisteModel(model.Email);
+            var user = await _repository.FindRegisteModel(model.Email); // Гет юзер бай імейл
 
             if (user != null)
-                throw new Exception("User with such email is already registered");
+                throw new Exception("User with such email is already registered"); // НІКОЛИ НЕ ПРОСТЕ ЕКСЕПШН
 
             var hashed = AuthOptions.PasswordHashing.GetHashedPassword(model.Password);
             var existingEmailConfirmation = await _repository.GetEmailConfirmationCode(model.Email, hashed);
@@ -67,14 +67,14 @@ namespace List_Service.Services
             return AuthOptions.GenerateJwtTokenFromEmailConfirmation(emailConfirmationCode);
         }
 
-        public async Task<UserDTO> SendConfCode(string confirmationCode,string pass,string email)
+        public async Task<UserDTO> SendConfCode(string confirmationCode,string pass,string email) // КОМИ, і напиши то вже повне слово пасворд, не вмрееш від перестоми
         {
             var emailConfirmationCode = await _repository.GetEmailConfirmationCode(pass, email, confirmationCode);
 
             if(emailConfirmationCode == null)
             {
-                var emailConfirmationCodes = await _repository.GetAllEmailConfirmationCodes(pass, email);
-                for(int i = 0; i < emailConfirmationCodes.Count(); i++)
+                var emailConfirmationCodes = await _repository.GetAllEmailConfirmationCodes(pass, email);// пуста лінійка
+                for(int i = 0; i < emailConfirmationCodes.Count(); i++) // було би добре писати біля такого коду коменти з поясненням, я без поняття що він робить і чому там і--
                 {
                     emailConfirmationCodes[i].EmailConfirmationLeftAttempts--;
                     if (emailConfirmationCodes[i].EmailConfirmationLeftAttempts <= 0)
@@ -86,9 +86,9 @@ namespace List_Service.Services
                 }
 
                 if (emailConfirmationCodes.Count == 0)
-                    throw new Exception("Invalid confirmation code. No attempts remaining. Pass registration again");
+                    throw new Exception("Invalid confirmation code. No attempts remaining. Pass registration again"); //АААААА
                 else
-                    throw new Exception("Invalid confirmation code");
+                    throw new Exception("Invalid confirmation code"); // ААААААААААААААААААААААА
             }
 
             var isExpired = DateTime.Now - emailConfirmationCode.DateCreation > TimeSpan.FromMinutes(30);
@@ -117,7 +117,7 @@ namespace List_Service.Services
             userDTO.EncodedJwt = AuthOptions.GetUserToken(newUser);
 
             return userDTO;
-
+            // лишній пустий рядок
         }
     }
 }

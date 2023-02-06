@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace MySecondProject.Filters
 {
-    public class NotImplExceptionFilterAttribute : ExceptionFilterAttribute
+    public class NotImplExceptionFilterAttribute : ExceptionFilterAttribute // шо за назва така?  воно взагалі працює?
     {
         public override void OnException(ExceptionContext context)
         {

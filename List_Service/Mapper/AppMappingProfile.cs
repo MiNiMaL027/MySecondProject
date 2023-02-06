@@ -11,13 +11,13 @@ namespace List_Service.Mapper
     {
         public AppMappingProfile()
         {
-            CreateMap<CreateCustomList, CustomList>().ReverseMap();
+            CreateMap<CreateCustomList, CustomList>().ReverseMap(); // реверсом ніколи не скористаєшся 
 
-            CreateMap<CustomList, CustomListView>().ReverseMap();
+            CreateMap<CustomList, CustomListView>().ReverseMap(); // реверсом ніколи не скористаєшся 
 
-            CreateMap<ToDoTaskView, ToDoTask>().ReverseMap();
+            CreateMap<ToDoTaskView, ToDoTask>().ReverseMap(); // реверсом ніколи не скористаєшся 
 
-            CreateMap<CreateToDoTask, ToDoTask>().ReverseMap();
+            CreateMap<CreateToDoTask, ToDoTask>().ReverseMap(); // реверсом ніколи не скористаєшся, тому він не потрібен
 
             CreateMap<UserDTO, User>().ReverseMap();
         }

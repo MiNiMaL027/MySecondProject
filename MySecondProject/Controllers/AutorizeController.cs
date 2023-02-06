@@ -31,7 +31,7 @@ namespace MySecondProject.Controllers
         [HttpGet("sendConfirmationCode/{confirmationCode}")]
         public async Task<ActionResult<UserDTO>> SendConfirmationCode(string confirmationCode)
         {
-            string pass = HttpContext.User.Claims.FirstOrDefault(c => c.Type == "TempPass").Value;
+            string pass = HttpContext.User.Claims.FirstOrDefault(c => c.Type == "TempPass").Value; // НІ НІ НІ, сервіс хай сам це получає
             string email = HttpContext.User.Identity.Name;
 
             return Ok(await _service.SendConfCode(confirmationCode, pass, email));
