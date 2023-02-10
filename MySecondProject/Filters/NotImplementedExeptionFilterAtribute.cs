@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace MySecondProject.Filters
 {
-    public class NotImplExceptionFilterAttribute : ExceptionFilterAttribute // шо за назва така?  воно взагалі працює?
+    public class NotImplExceptionFilterAttribute : ExceptionFilterAttribute
     {
         public override void OnException(ExceptionContext context)
         {
@@ -13,9 +13,17 @@ namespace MySecondProject.Filters
             {
                 context.Result = new NotFoundObjectResult(new { errorMessage = context.Exception.Message });
             }
-            else if (context.Exception is ValidProblemException)
+            else if (context.Exception is ValidationException)
             {
                 context.Result = new BadRequestObjectResult(new { errorMessage = context.Exception.Message });
+            }
+            else if (context.Exception is LoginException)
+            {
+                context.Result = new UnauthorizedResult();
+            }
+            else if (context.Exception is UnautorizeException)
+            {
+                context.Result = new UnauthorizedResult();
             }
         }
     }

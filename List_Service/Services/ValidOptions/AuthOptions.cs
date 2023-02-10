@@ -27,13 +27,15 @@ namespace List_Service.Services.ValidOptions
         {
             var identity = GetIdentity(user);
             var now = DateTime.UtcNow;
+
             var jwt = new JwtSecurityToken(
             issuer: AuthOptions.ISSUER,
-            audience: AuthOptions.AUDIENCE, // в чому прикол що воно зїхало?
-                    notBefore: now,
-                    claims: identity.Claims,
-                    expires: now.Add(TimeSpan.FromMinutes(AuthOptions.LIFETIME_MINUTES)),
-                    signingCredentials: new SigningCredentials(AuthOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));
+            audience: AuthOptions.AUDIENCE,
+            notBefore: now,
+            claims: identity.Claims,
+            expires: now.Add(TimeSpan.FromMinutes(AuthOptions.LIFETIME_MINUTES)),
+
+            signingCredentials: new SigningCredentials(AuthOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));
             var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
 
             return encodedJwt;
@@ -43,12 +45,12 @@ namespace List_Service.Services.ValidOptions
         {
             var claims = new List<Claim>
             {
-                    new Claim(ClaimsIdentity.DefaultNameClaimType, user.Email),
-                    new Claim(ClaimsIdentity.DefaultRoleClaimType, "DefaultUser"),
-                    new Claim("UserId", user.Id.ToString())
+                new Claim(ClaimsIdentity.DefaultNameClaimType, user.Email),
+                new Claim(ClaimsIdentity.DefaultRoleClaimType, "DefaultUser"),
+                new Claim("UserId", user.Id.ToString())
             };
 
-            ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims, "Token", ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType); // вар
+            var claimsIdentity = new ClaimsIdentity(claims, "Token", ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);
 
             return claimsIdentity;
         }
@@ -74,7 +76,7 @@ namespace List_Service.Services.ValidOptions
 
         public static string GetRandomEmailConfirmationCode()
         {
-            Random rnd = new Random();
+            var rnd = new Random();
             char[] confirmationCodeChar = new char[8];
             for (int i = 0; i < confirmationCodeChar.Length; ++i) 
             {
@@ -88,9 +90,9 @@ namespace List_Service.Services.ValidOptions
         {
             var claims = new List<Claim>
             {
-                    new Claim(ClaimsIdentity.DefaultNameClaimType, emailConfirmationCode.Email),
-                    new Claim(ClaimsIdentity.DefaultRoleClaimType, "User"),
-                    new Claim("TempPass", emailConfirmationCode.Password)
+                new Claim(ClaimsIdentity.DefaultNameClaimType, emailConfirmationCode.Email),
+                new Claim(ClaimsIdentity.DefaultRoleClaimType, "User"),
+                new Claim("TempPass", emailConfirmationCode.Password)
             };
 
             var claimsIdentity = new ClaimsIdentity(claims, "Token", ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);
@@ -102,13 +104,15 @@ namespace List_Service.Services.ValidOptions
         {
             var identity = GetIdentity(emailConfirmationCode);
             var now = DateTime.UtcNow;
+
             var jwt = new JwtSecurityToken(
             issuer: AuthOptions.ISSUER,
-            audience: AuthOptions.AUDIENCE, // і тут чомусь зїхало
-                    notBefore: now,
-                    claims: identity.Claims,
-                    expires: now.Add(TimeSpan.FromMinutes(AuthOptions.LIFETIME_MINUTES)),
-                    signingCredentials: new SigningCredentials(AuthOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));
+            audience: AuthOptions.AUDIENCE,
+            notBefore: now,
+            claims: identity.Claims,
+            expires: now.Add(TimeSpan.FromMinutes(AuthOptions.LIFETIME_MINUTES)),
+
+            signingCredentials: new SigningCredentials(AuthOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));
             var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
 
             return encodedJwt;

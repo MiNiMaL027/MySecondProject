@@ -7,11 +7,11 @@ using List_Domain.ModelDTO;
 namespace MySecondProject.Controllers
 {
     [NotImplExceptionFilter]
-    public class AutorizeController : Controller
+    public class LoginController : Controller
     {
-        private readonly IAutorizeService _service;
+        private readonly ILoginService _service;
 
-        public AutorizeController(IAutorizeService service)
+        public LoginController(ILoginService service)
         {
             _service= service;
         }      
@@ -31,10 +31,8 @@ namespace MySecondProject.Controllers
         [HttpGet("sendConfirmationCode/{confirmationCode}")]
         public async Task<ActionResult<UserDTO>> SendConfirmationCode(string confirmationCode)
         {
-            string pass = HttpContext.User.Claims.FirstOrDefault(c => c.Type == "TempPass").Value; // НІ НІ НІ, сервіс хай сам це получає
-            string email = HttpContext.User.Identity.Name;
-
-            return Ok(await _service.SendConfCode(confirmationCode, pass, email));
+            _service.SetHttpContext(HttpContext);
+            return Ok(await _service.SendConfCode(confirmationCode));
         }
     }
 }

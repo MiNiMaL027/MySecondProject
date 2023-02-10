@@ -5,6 +5,8 @@ using List_Domain.Exeptions;
 using List_Domain.Models;
 using List_Domain.ViewModel;
 using List_Service.Interfaces;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 
 namespace List_Service.Services
 {
@@ -12,25 +14,41 @@ namespace List_Service.Services
     {
         private readonly IToDoTaskRepository _todoTaskRepository;
         private readonly IMapper _mapper;
+        private readonly IAutorizationService<ToDoTask> _authService;
+        private HttpContext? _httpContext;
 
-        public ToDoTaskService(IToDoTaskRepository toDoTaskRepository, IMapper mapper)
+        public ToDoTaskService(IToDoTaskRepository toDoTaskRepository, IMapper mapper, IAutorizationService<ToDoTask> authService)
         {
             _mapper = mapper;
             _todoTaskRepository = toDoTaskRepository;
+            _authService = authService;
         }
 
-        public async Task<int> Add(CreateToDoTask item, int userId)
+
+        public void SetHttpContext(HttpContext httpContext)
         {
-            item.Title.Trim(); // АААААААААААААААААААААААААААА
+            if (httpContext == null)
+                throw new NotFoundException();
+
+            _httpContext = httpContext;
+        }
+
+        public async Task<int> Add(CreateToDoTask item)
+        {
+            _authService.SetUserId(_httpContext);
+
+            var userId = _authService.GetUserId();
+
+            item.Title = item.Title.Trim();
 
             if (await _todoTaskRepository.CheckIfNameExist(item.Title, userId))
-                throw new ValidProblemException($"{item.Title} - This name is used");
+                throw new ValidationException($"{item.Title} - This name is used");
 
             if (!ValidOptions.ValidOptions.ValidName(item.Title))
-                throw new ValidProblemException($"{item.Title} - Not valide");
+                throw new ValidationException($"{item.Title} - Not valide");
 
             var itemToDb = _mapper.Map<ToDoTask>(item);
-            itemToDb.UserId = userId; // не має бути переданим
+            itemToDb.UserId = userId;
             itemToDb.CreationDate = DateTime.Now;
 
             await _todoTaskRepository.Add(itemToDb);
@@ -38,38 +56,53 @@ namespace List_Service.Services
             return itemToDb.Id;
         }
 
-        public async Task<bool> CompleteTask(int id, int userId)
+        public async Task<bool> CompleteTask(int id)
         {
-            return await _todoTaskRepository.CompleteTask(id, userId);
+            _authService.SetUserId(_httpContext);
+            _authService.AuthorizeUser(id);
+
+            return await _todoTaskRepository.CompleteTask(id);
         }
 
-        public async Task<IQueryable<ToDoTaskView>> Get(int userId)
+        public async Task<IQueryable<ViewToDoTask>> GetByUserId()
         {
-            var items = await _todoTaskRepository.Get(userId);
+            _authService.SetUserId(_httpContext);
 
-            return items.ToList().Select(x => _mapper.Map<ToDoTaskView>(x)).AsQueryable();
+            var userId = _authService.GetUserId();
+            var items = await _todoTaskRepository.GetByUser(userId);
+
+            return items.ToList().Select(x => _mapper.Map<ViewToDoTask>(x)).AsQueryable();
         }
 
-        public async Task<List<int>> Remove(List<int> ids, int uresId)
+        public async Task<List<int>> Remove(List<int> ids)
         {
-            return await _todoTaskRepository.Remove(ids, uresId);
+            _authService.SetUserId(_httpContext);
+
+            foreach (int id in ids)
+                _authService.AuthorizeUser(id);
+
+            return await _todoTaskRepository.Remove(ids);
         }
 
-        public async Task<int> Update(CreateToDoTask item, int userId, int taskId)
-        {          
-            item.Title.Trim(); // ААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААА
+        public async Task<int> Update(CreateToDoTask item, int taskId)
+        {
+            _authService.SetUserId(_httpContext);
+            _authService.AuthorizeUser(taskId);
+
+            var userId = _authService.GetUserId();
+            item.Title = item.Title.Trim();
 
             if (await _todoTaskRepository.CheckIfNameExist(item.Title, userId))
-                throw new ValidProblemException($"{item.Title} - This name is used");
+                throw new ValidationException($"{item.Title} - This name is used");
 
             if (!ValidOptions.ValidOptions.ValidName(item.Title))
-                throw new ValidProblemException($"{item.Title} - Not valide");
+                throw new ValidationException($"{item.Title} - Not valide");
 
             var itemToDb = _mapper.Map<ToDoTask>(item);
             itemToDb.Id = taskId;
             itemToDb.UserId = userId;
 
-            if (!await _todoTaskRepository.Update(itemToDb, userId))
+            if (!await _todoTaskRepository.Update(itemToDb))
                 throw new NotFoundException($"{taskId} - Not found");
 
             return itemToDb.Id;

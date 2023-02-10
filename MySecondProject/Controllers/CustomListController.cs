@@ -10,19 +10,20 @@ namespace MySecondProject.Controllers
     [ApiController]
     public class CustomListController : Controller
     {
-        private readonly ICustomListService _customListResvice;
+        private readonly ICustomListService _customListService;
 
         public CustomListController(ICustomListService customListResvice)
         {
-            _customListResvice = customListResvice;
+            _customListService = customListResvice;
         }
 
         [HttpGet]
         [EnableQuery]
-        public async Task<ActionResult<IQueryable<CustomListView>>> Get()
+        public async Task<ActionResult<IQueryable<ViewCustomList>>> Get()
         {
-            var userId = Convert.ToInt32(HttpContext.User.Claims.FirstOrDefault(c => c.Type == "UserId").Value); // НІ
-            IQueryable<CustomListView> retrivalCustomList = await _customListResvice.Get(userId);
+            _customListService.SetHttpContext(HttpContext);
+
+            IQueryable<ViewCustomList> retrivalCustomList = await _customListService.GetByUserId();
 
             return Ok(retrivalCustomList);
         }
@@ -30,54 +31,25 @@ namespace MySecondProject.Controllers
         [HttpPost]
         public async Task<ActionResult<int>> Add(CreateCustomList list)
         {
-            try // Запхай в мідлФеа весь ексепш хендлінг, і підключи глобально  https://enlear.academy/global-exception-handling-in-net-6-16908fc8dc28
-            {
-                var userId = Convert.ToInt32(HttpContext.User.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
+            _customListService.SetHttpContext(HttpContext);
 
-                return Ok(await _customListResvice.Add(list,userId));
-            }
-            catch(NotImplementedException)
-            {
-                return ValidationProblem();
-            }
-            catch(NullReferenceException)
-            {
-                return NotFound();
-            }
+            return Ok(await _customListService.Add(list));
         }
 
         [HttpDelete]
-        public async Task<ActionResult<List<int>>> Delete(List<int> ids) // нема аейту, нафіга таск?
+        public async Task<ActionResult<List<int>>> Delete(List<int> ids)
         {
-            try
-            {
-                var userId = Convert.ToInt32(HttpContext.User.Claims.FirstOrDefault(c => c.Type == "UserId").Value); //АААА
+            _customListService.SetHttpContext(HttpContext);
 
-                return Ok(_customListResvice.Remove(ids, userId));
-            }
-            catch(NotImplementedException)
-            {
-                return NotFound(ids);
-            }
+            return Ok(await _customListService.Remove(ids));          
         }
 
         [HttpPut]
         public async Task<ActionResult<int>> Update(CreateCustomList list, int listID)
         {
-            try
-            {
-                var userId = Convert.ToInt32(HttpContext.User.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
-
-                return Ok(await _customListResvice.Update(list, userId,listID));
-            }
-            catch(NotImplementedException)
-            {
-                return ValidationProblem();
-            }
-            catch(NullReferenceException)
-            {
-                return NotFound(listID);
-            }
+            _customListService.SetHttpContext(HttpContext);
+          
+            return Ok(await _customListService.Update(list, listID));         
         }
     }
 }
