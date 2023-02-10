@@ -1,11 +1,17 @@
-﻿
+﻿using Microsoft.AspNetCore.Http;
+
 namespace List_Service.Interfaces
 {
-    public interface IDefaultService<T,C> where T : class? where C : class? // замість Т С назив краще РеквестТайп, РеспонсуТайп, поки не зрозуміло що є що
+    public interface IDefaultService<RequestType,ResponseType> where RequestType : class? where ResponseType : class? 
     {
-        Task<int> Add(C item,int userid);
-        Task<IQueryable<T>> Get(int userId);
-        Task<List<int>> Remove(List<int> ids, int uresId);
-        Task<int> Update(C item,int userId, int itemId);
+        Task<int> Add(ResponseType item);
+
+        Task<IQueryable<RequestType>> GetByUserId();
+
+        Task<List<int>> Remove(List<int> ids);
+
+        Task<int> Update(ResponseType item, int itemId);
+
+        void SetHttpContext(HttpContext httpContext);
     }
 }

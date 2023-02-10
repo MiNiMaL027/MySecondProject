@@ -3,7 +3,6 @@ using List_Domain.CreateModel;
 using List_Domain.ModelDTO;
 using List_Domain.Models;
 using List_Domain.ViewModel;
-using Microsoft.AspNetCore.Http;
 
 namespace List_Service.Mapper
 {
@@ -11,13 +10,13 @@ namespace List_Service.Mapper
     {
         public AppMappingProfile()
         {
-            CreateMap<CreateCustomList, CustomList>().ReverseMap(); // реверсом ніколи не скористаєшся 
+            CreateMap<CreateCustomList, CustomList>();
 
-            CreateMap<CustomList, CustomListView>().ReverseMap(); // реверсом ніколи не скористаєшся 
+            CreateMap<CustomList, ViewCustomList>().ReverseMap();
 
-            CreateMap<ToDoTaskView, ToDoTask>().ReverseMap(); // реверсом ніколи не скористаєшся 
+            CreateMap<ViewToDoTask, ToDoTask>().ReverseMap();
 
-            CreateMap<CreateToDoTask, ToDoTask>().ReverseMap(); // реверсом ніколи не скористаєшся, тому він не потрібен
+            CreateMap<CreateToDoTask, ToDoTask>();
 
             CreateMap<UserDTO, User>().ReverseMap();
         }

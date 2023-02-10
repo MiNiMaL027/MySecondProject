@@ -5,6 +5,7 @@ using List_Domain.Exeptions;
 using List_Domain.Models;
 using List_Domain.ViewModel;
 using List_Service.Interfaces;
+using Microsoft.AspNetCore.Http;
 
 namespace List_Service.Services
 {
@@ -12,57 +13,83 @@ namespace List_Service.Services
     {
         private readonly ICustomListRepository _customListRepository;
         private readonly IMapper _mapper;
-        public CustomListService(ICustomListRepository customListRepository,IMapper mapper)
+        private readonly IAutorizationService<CustomList> _authService;
+
+        private HttpContext? _httpContext;
+
+        public CustomListService(ICustomListRepository customListRepository, IMapper mapper, IAutorizationService<CustomList> authService)
         {
             _mapper= mapper;
             _customListRepository = customListRepository;
+            _authService = authService;
         }
 
-        public async Task<int> Add(CreateCustomList item, int userId)
+        public void SetHttpContext(HttpContext httpContext)
         {
-            item.Name.Trim(); // Боже)) ти хо колись перевіряєш код? воно не працює, і в одному випадеку кидає ексепшн, ТЕСТУВАННЯ ТРЕБА ДЛЯ КОЖНОГО РЯДКА, написав строчку - перевірив чи воно працює, інакше це трата часу девелоперів які це будуть перевіряти, Тестерів які це будуть тестити і тебе, який якому код будуть завертати по 100 разів через такі "ай махав я тестити"
+            _httpContext = httpContext;
+        }
+
+        public async Task<int> Add(CreateCustomList item)
+        {
+            _authService.SetUserId(_httpContext);
+
+            var userId = _authService.GetUserId();
+
+            item.Name = item.Name.Trim();
 
             if (await _customListRepository.CheckIfNameExist(item.Name,userId))
-                throw new ValidProblemException($"{item.Name} - This name is used"); // погана назва, Валідна проблема експешн)) ВалідейшнЕксепшн
+                throw new ValidationException($"{item.Name} - This name is used");
 
             if (!ValidOptions.ValidOptions.ValidName(item.Name))
-                throw new ValidProblemException($"{item.Name} - Not valide");
+                throw new ValidationException($"{item.Name} - Not valide");
 
             var itemToDb = _mapper.Map<CustomList>(item);
-            itemToDb.UserId= userId; // пробіл
+            itemToDb.UserId = userId;
             
             await _customListRepository.Add(itemToDb);
 
             return itemToDb.Id;
         }
 
-        public async Task<IQueryable<CustomListView>> Get(int userid) // гет бай бзер айді, а ще треба метод просто гет бай айді, одне
+        public async Task<IQueryable<ViewCustomList>> GetByUserId()
         {
-            var items = await _customListRepository.Get(userid);
+            _authService.SetUserId(_httpContext);
 
-            return items.ToList().Select(x => _mapper.Map<CustomListView>(x)).AsQueryable();
+            var userId = _authService.GetUserId();
+            var items = await _customListRepository.GetByUser(userId);
+
+            return items.ToList().Select(x => _mapper.Map<ViewCustomList>(x)).AsQueryable();
         }
 
-        public async Task<List<int>> Remove(List<int> ids, int userId)
+        public async Task<List<int>> Remove(List<int> ids)
         {
-            return await _customListRepository.Remove(ids,userId);// коми
+            _authService.SetUserId(_httpContext);
+
+            foreach (int id in ids)
+                _authService.AuthorizeUser(id);
+
+            return await _customListRepository.Remove(ids);
         }
 
-        public async Task<int> Update(CreateCustomList item, int userId, int listId)
+        public async Task<int> Update(CreateCustomList item, int listId)
         {
-            item.Name.Trim();// ААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААА
+            _authService.SetUserId(_httpContext);
+            _authService.AuthorizeUser(listId);
+
+            var userId = _authService.GetUserId();
+            item.Name = item.Name.Trim();
 
             if (await _customListRepository.CheckIfNameExist(item.Name, userId))
-                throw new ValidProblemException($"{item.Name} - This name is used");
+                throw new ValidationException($"{item.Name} - This name is used");
 
             if (!ValidOptions.ValidOptions.ValidName(item.Name))
-                throw new ValidProblemException($"{item.Name} - Not valide");
+                throw new ValidationException($"{item.Name} - Not valide");
 
             var itemToDb = _mapper.Map<CustomList>(item);
             itemToDb.Id = listId;
-            itemToDb.UserId = userId; // сервіс має сам витягувати юезр айді, а не бути переданим від контроллера, я попереджав, виправляй
+            itemToDb.UserId = userId;
 
-            if (!await _customListRepository.Update(itemToDb, userId))
+            if (!await _customListRepository.Update(itemToDb))
                 throw new NotFoundException($"{listId} - can't be Foud");
 
             return itemToDb.Id;
