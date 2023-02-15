@@ -19,10 +19,11 @@ namespace MySecondProject.Controllers
 
         [HttpGet]
         [EnableQuery]
-        public async Task<ActionResult<IQueryable<ToDoTaskView>>> Get()
+        public async Task<ActionResult<IQueryable<ViewToDoTask>>> Get()
         {
-            var userId = Convert.ToInt32(HttpContext.User.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
-            IQueryable<ToDoTaskView> retrivalToDoTask = await _toDoTaskService.Get(userId);
+            _toDoTaskService.SetHttpContext(HttpContext);
+
+            IQueryable<ViewToDoTask> retrivalToDoTask = await _toDoTaskService.GetByUserId();
 
             return Ok(retrivalToDoTask);
         }
@@ -30,69 +31,33 @@ namespace MySecondProject.Controllers
         [HttpPost]
         public async Task<ActionResult<int>> Add(CreateToDoTask task)
         {
-            try
-            {
-                var UserId = Convert.ToInt32(HttpContext.User.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
+            _toDoTaskService.SetHttpContext(HttpContext);
 
-                return Ok(await _toDoTaskService.Add(task, UserId));
-            }
-            catch(NotImplementedException)
-            {
-                return ValidationProblem();
-            }
-            catch (NullReferenceException)
-            {
-                return NotFound();
-            }
+            return Ok(await _toDoTaskService.Add(task));
         }
 
         [HttpDelete]
         public async Task<ActionResult<List<int>>> Delete(List<int> ids)
         {
-            try
-            {
-                var userId = Convert.ToInt32(HttpContext.User.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
-
-                return Ok(_toDoTaskService.Remove(ids, userId));
-            }
-            catch(NotImplementedException)
-            {
-                return NotFound(ids);
-            }           
+            _toDoTaskService.SetHttpContext(HttpContext);
+           
+            return Ok(await _toDoTaskService.Remove(ids));         
         }
 
         [HttpPut]
         public async Task<ActionResult<int>> Update(CreateToDoTask task, int taskId)
         {
-            try
-            {
-                var userId = Convert.ToInt32(HttpContext.User.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
+            _toDoTaskService.SetHttpContext(HttpContext);
 
-                return Ok(await _toDoTaskService.Update(task, userId,taskId));
-            }
-            catch(NotImplementedException)
-            {
-                return ValidationProblem();
-            }
-            catch(NullReferenceException)
-            {
-                return NotFound();
-            }
+            return Ok(await _toDoTaskService.Update(task, taskId));      
         }
 
         [HttpPut("Complete")]
         public async Task<ActionResult> CompleteOrUncomplete(int id)
         {
-            try
-            {
-                var userId = Convert.ToInt32(HttpContext.User.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
-
-                return Ok(await _toDoTaskService.CompleteTask(id, userId));
-            }
-            catch (NullReferenceException)
-            {
-                return NotFound(id);
-            }
+            _toDoTaskService.SetHttpContext(HttpContext);
+            
+            return Ok(await _toDoTaskService.CompleteTask(id));
         }
     }
 }

@@ -3,8 +3,13 @@
     public interface IDefaultRepository<T> where T: class?
     {
         Task<int> Add(T item);
-        Task<IQueryable<T>> Get(int userId);
-        Task<List<int>> Remove(List<int> ids, int userId);
-        Task<bool> Update(T item, int userId);
+
+        Task<IQueryable<T>> GetByUser(int userId);
+
+        Task<T> GetById(int Id);
+
+        Task<List<int>> Remove(List<int> ids);
+
+        Task<bool> Update(T item);
     }
 }

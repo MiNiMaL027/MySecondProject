@@ -13,9 +13,17 @@ namespace MySecondProject.Filters
             {
                 context.Result = new NotFoundObjectResult(new { errorMessage = context.Exception.Message });
             }
-            else if (context.Exception is ValidProblemException)
+            else if (context.Exception is ValidationException)
             {
                 context.Result = new BadRequestObjectResult(new { errorMessage = context.Exception.Message });
+            }
+            else if (context.Exception is LoginException)
+            {
+                context.Result = new UnauthorizedResult();
+            }
+            else if (context.Exception is UnautorizeException)
+            {
+                context.Result = new UnauthorizedResult();
             }
         }
     }
