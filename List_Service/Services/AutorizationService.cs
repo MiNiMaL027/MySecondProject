@@ -8,12 +8,15 @@ namespace List_Service.Services
 {
     public class AutorizationService<T> : IAutorizationService<T> where T : UserEntity
     {
-        private readonly IDefaultRepository<T> _repository;
+        private readonly IChekAuthorization<T> _repository;
+        private readonly IHttpContextAccessor _httpContextAccessor;
         private int _currenUserID;
 
-        public AutorizationService(IDefaultRepository<T> repository)
+        public AutorizationService(IChekAuthorization<T> repository, IHttpContextAccessor httpContextAccessor)
         {
             _repository = repository;
+            _httpContextAccessor = httpContextAccessor;
+            _currenUserID = Convert.ToInt32(httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
         }
 
         public void SetUserId(HttpContext httpContext)
@@ -31,7 +34,7 @@ namespace List_Service.Services
 
         public async void AuthorizeUser(int id)
         {
-            var item =  await _repository.GetById(id);
+            var item = await _repository.GetById(id);
 
             if (item == null)
                 throw new NotFoundException();

@@ -11,7 +11,5 @@ namespace List_Service.Interfaces
         Task<List<int>> Remove(List<int> ids);
 
         Task<int> Update(ResponseType item, int itemId);
-
-        void SetHttpContext(HttpContext httpContext);
     }
 }

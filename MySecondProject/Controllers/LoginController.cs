@@ -32,6 +32,7 @@ namespace MySecondProject.Controllers
         public async Task<ActionResult<UserDTO>> SendConfirmationCode(string confirmationCode)
         {
             _service.SetHttpContext(HttpContext);
+
             return Ok(await _service.SendConfCode(confirmationCode));
         }
     }

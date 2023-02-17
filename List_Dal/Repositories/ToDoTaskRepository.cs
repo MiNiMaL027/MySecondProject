@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace List_Dal.Repositories
 {
-    public class ToDoTaskRepository : IToDoTaskRepository
+    public class ToDoTaskRepository : IToDoTaskRepository ,IChekAuthorization<ToDoTask>
     {
         private readonly ApplicationContext db;
         private readonly DbSet<ToDoTask> dbSet;

@@ -9,11 +9,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace MySecondProject.Migrations
+namespace List_Dal.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20230131175743_SeedInitialData")]
-    partial class SeedInitialData
+    [Migration("20230216104228_FixSettings")]
+    partial class FixSettings
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -47,15 +47,6 @@ namespace MySecondProject.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("CustomLists");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            IsDeleted = false,
-                            Name = "List 1",
-                            UserId = 1
-                        });
                 });
 
             modelBuilder.Entity("List_Domain.Models.EmailConfirmationCode", b =>
@@ -91,6 +82,32 @@ namespace MySecondProject.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("EmailConfirmationCodes");
+                });
+
+            modelBuilder.Entity("List_Domain.Models.Settings", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<bool>("AllowNotification")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("DefaultListId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DefaultListId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Settings");
                 });
 
             modelBuilder.Entity("List_Domain.Models.ToDoTask", b =>
@@ -139,61 +156,6 @@ namespace MySecondProject.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("ToDoTasks");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            CreationDate = new DateTime(2023, 1, 31, 19, 57, 43, 465, DateTimeKind.Local).AddTicks(9215),
-                            Description = "I have to go shopping",
-                            DueToDate = new DateTime(2023, 2, 4, 0, 0, 0, 0, DateTimeKind.Local),
-                            Importance = 0,
-                            IsCompleted = false,
-                            IsDeleted = false,
-                            IsFavorite = false,
-                            Title = "Shop",
-                            UserId = 1
-                        },
-                        new
-                        {
-                            Id = 2,
-                            CreationDate = new DateTime(2023, 1, 31, 19, 57, 43, 465, DateTimeKind.Local).AddTicks(9248),
-                            Description = "I have to learn English",
-                            DueToDate = new DateTime(2023, 2, 15, 0, 0, 0, 0, DateTimeKind.Local),
-                            Importance = 1,
-                            IsCompleted = false,
-                            IsDeleted = false,
-                            IsFavorite = false,
-                            Title = "Learning",
-                            UserId = 1
-                        },
-                        new
-                        {
-                            Id = 3,
-                            CreationDate = new DateTime(2023, 1, 31, 19, 57, 43, 465, DateTimeKind.Local).AddTicks(9252),
-                            Description = "I have to learn Asp.Net Core",
-                            DueToDate = new DateTime(2023, 2, 10, 0, 0, 0, 0, DateTimeKind.Local),
-                            Importance = 2,
-                            IsCompleted = false,
-                            IsDeleted = false,
-                            IsFavorite = true,
-                            Title = "AspNet",
-                            UserId = 1
-                        },
-                        new
-                        {
-                            Id = 4,
-                            CreationDate = new DateTime(2023, 1, 30, 19, 57, 43, 465, DateTimeKind.Local).AddTicks(9257),
-                            CustomListId = 1,
-                            Description = "Description",
-                            DueToDate = new DateTime(2023, 1, 31, 19, 57, 43, 465, DateTimeKind.Local).AddTicks(9259),
-                            Importance = 2,
-                            IsCompleted = false,
-                            IsDeleted = false,
-                            IsFavorite = true,
-                            Title = "CustomList Task1",
-                            UserId = 1
-                        });
                 });
 
             modelBuilder.Entity("List_Domain.Models.User", b =>
@@ -217,15 +179,6 @@ namespace MySecondProject.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Users");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Email = "smeldoc@gmail.com",
-                            Name = "Andrii",
-                            Password = "PIrgcQjPgUpuyF8l+7CEo2bT+eebTyKYc+f1fDoGjLs="
-                        });
                 });
 
             modelBuilder.Entity("List_Domain.Models.CustomList", b =>
@@ -235,6 +188,23 @@ namespace MySecondProject.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("List_Domain.Models.Settings", b =>
+                {
+                    b.HasOne("List_Domain.Models.CustomList", "DefaultList")
+                        .WithMany()
+                        .HasForeignKey("DefaultListId");
+
+                    b.HasOne("List_Domain.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("DefaultList");
 
                     b.Navigation("User");
                 });

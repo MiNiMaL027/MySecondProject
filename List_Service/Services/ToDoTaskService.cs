@@ -5,8 +5,6 @@ using List_Domain.Exeptions;
 using List_Domain.Models;
 using List_Domain.ViewModel;
 using List_Service.Interfaces;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 
 namespace List_Service.Services
 {
@@ -15,7 +13,6 @@ namespace List_Service.Services
         private readonly IToDoTaskRepository _todoTaskRepository;
         private readonly IMapper _mapper;
         private readonly IAutorizationService<ToDoTask> _authService;
-        private HttpContext? _httpContext;
 
         public ToDoTaskService(IToDoTaskRepository toDoTaskRepository, IMapper mapper, IAutorizationService<ToDoTask> authService)
         {
@@ -24,19 +21,8 @@ namespace List_Service.Services
             _authService = authService;
         }
 
-
-        public void SetHttpContext(HttpContext httpContext)
-        {
-            if (httpContext == null)
-                throw new NotFoundException();
-
-            _httpContext = httpContext;
-        }
-
         public async Task<int> Add(CreateToDoTask item)
         {
-            _authService.SetUserId(_httpContext);
-
             var userId = _authService.GetUserId();
 
             item.Title = item.Title.Trim();
@@ -58,7 +44,6 @@ namespace List_Service.Services
 
         public async Task<bool> CompleteTask(int id)
         {
-            _authService.SetUserId(_httpContext);
             _authService.AuthorizeUser(id);
 
             return await _todoTaskRepository.CompleteTask(id);
@@ -66,8 +51,6 @@ namespace List_Service.Services
 
         public async Task<IQueryable<ViewToDoTask>> GetByUserId()
         {
-            _authService.SetUserId(_httpContext);
-
             var userId = _authService.GetUserId();
             var items = await _todoTaskRepository.GetByUser(userId);
 
@@ -76,8 +59,6 @@ namespace List_Service.Services
 
         public async Task<List<int>> Remove(List<int> ids)
         {
-            _authService.SetUserId(_httpContext);
-
             foreach (int id in ids)
                 _authService.AuthorizeUser(id);
 
@@ -86,7 +67,6 @@ namespace List_Service.Services
 
         public async Task<int> Update(CreateToDoTask item, int taskId)
         {
-            _authService.SetUserId(_httpContext);
             _authService.AuthorizeUser(taskId);
 
             var userId = _authService.GetUserId();

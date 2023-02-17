@@ -21,9 +21,7 @@ namespace MySecondProject.Controllers
         [EnableQuery]
         public async Task<ActionResult<IQueryable<ViewCustomList>>> Get()
         {
-            _customListService.SetHttpContext(HttpContext);
-
-            IQueryable<ViewCustomList> retrivalCustomList = await _customListService.GetByUserId();
+            var retrivalCustomList = await _customListService.GetByUserId();
 
             return Ok(retrivalCustomList);
         }
@@ -31,24 +29,18 @@ namespace MySecondProject.Controllers
         [HttpPost]
         public async Task<ActionResult<int>> Add(CreateCustomList list)
         {
-            _customListService.SetHttpContext(HttpContext);
-
             return Ok(await _customListService.Add(list));
         }
 
         [HttpDelete]
         public async Task<ActionResult<List<int>>> Delete(List<int> ids)
         {
-            _customListService.SetHttpContext(HttpContext);
-
             return Ok(await _customListService.Remove(ids));          
         }
 
         [HttpPut]
         public async Task<ActionResult<int>> Update(CreateCustomList list, int listID)
-        {
-            _customListService.SetHttpContext(HttpContext);
-          
+        {       
             return Ok(await _customListService.Update(list, listID));         
         }
     }

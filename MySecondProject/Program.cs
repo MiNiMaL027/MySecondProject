@@ -12,7 +12,6 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using MySecondProject.Filters;
 using List_Domain.Models;
-using System.Text.Json;
 
 namespace MySecondProject
 {
@@ -25,23 +24,32 @@ namespace MySecondProject
             builder.Services.AddAutoMapper(typeof(AppMappingProfile).Assembly);
 
             builder.Services.AddControllersWithViews();
-            builder.Services.AddControllers(options=>
+            builder.Services.AddControllers(options =>
             options.Filters.Add(typeof(NotImplExceptionFilterAttribute)))
-                .AddOData(options => options.Select().OrderBy().Filter().SkipToken().SetMaxTop(10))
+                .AddOData(options => options.Select().OrderBy().Filter().SkipToken().SetMaxTop(10));
 
             builder.Services.AddEndpointsApiExplorer();
 
             builder.Services.AddScoped<IToDoTaskRepository, ToDoTaskRepository>();
             builder.Services.AddScoped<ICustomListRepository, CustomListRepository>();
+            builder.Services.AddScoped<ISettingsRepository, SettingsRepository>();
+
             builder.Services.AddScoped<ICustomListService, CustomListService>();
             builder.Services.AddScoped<IToDoTaskService, ToDoTaskService>();
-            builder.Services.AddScoped<IDefaultRepository<ToDoTask>, ToDoTaskRepository>();
-            builder.Services.AddScoped<IDefaultRepository<CustomList>, CustomListRepository>();
+            builder.Services.AddScoped<ISettingsService, SettingsService>();
+
+            builder.Services.AddScoped<IChekAuthorization<ToDoTask>, ToDoTaskRepository>();
+            builder.Services.AddScoped<IChekAuthorization<CustomList>, CustomListRepository>();
+            builder.Services.AddScoped<IChekAuthorization<Settings>, SettingsRepository>();
+
             builder.Services.AddScoped<IAutorizationService<ToDoTask>, AutorizationService<ToDoTask>>();
             builder.Services.AddScoped<IAutorizationService<CustomList>, AutorizationService<CustomList>>();
+            builder.Services.AddScoped<IAutorizationService<Settings>, AutorizationService<Settings>>();
 
             builder.Services.AddSingleton<ValidOptions>();
-    
+
+            builder.Services.AddHttpContextAccessor();
+
             builder.Services.AddSwaggerGen(options =>
             {
                 options.AddSecurityDefinition("JWT Bearer", new OpenApiSecurityScheme
@@ -87,7 +95,7 @@ namespace MySecondProject
 
             builder.Services.AddDbContext<ApplicationContext>(options => 
                 options.UseSqlServer(connection, b =>
-                b.MigrationsAssembly("MySecondProject")),
+                b.MigrationsAssembly("List_Dal")),
                 ServiceLifetime.Transient);
 
             var app = builder.Build();

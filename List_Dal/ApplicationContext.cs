@@ -13,9 +13,11 @@ namespace List_Dal
 
         public DbSet<EmailConfirmationCode> EmailConfirmationCodes { get; set; }
 
+        public DbSet<Settings> Settings { get; set; }
+
         public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options) 
         {
-            Database.Migrate();
+            Database.EnsureCreated();
         }     
     }
 }
