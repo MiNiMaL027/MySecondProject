@@ -1,0 +1,27 @@
+﻿@using MySecondProjectWEB.Views.ViewHelpsModel;
+@using List_Domain.Exeptions;
+@model ContentStorageModel;
+
+<h2> Обновлення списку</h2>
+
+<form method="post" id="my-form" action="/Home/UpdateList">
+
+    <label for="currentList">Список для обновлення:</label><br />
+    <select name="listId">
+
+        @foreach(var list in Model._customLists)
+        {
+            <option value="@list.Id">@list.Name</option>
+        }
+
+    </select> <br />
+
+    <label for="updateList">Обновлені дані:</label> <br />
+    <label for="updateList">Ім'я списку:</label><br />
+
+    <input type="text" name="Name"/>
+    <p>
+        <input type="submit" value="Вибрати" />
+    </p>
+
+</form>

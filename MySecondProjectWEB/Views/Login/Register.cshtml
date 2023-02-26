@@ -1,0 +1,25 @@
+﻿@model List_Domain.Models.NotDbEntity.RegisterModel
+
+@{
+    ViewData["Title"] = "Register";
+    Layout = "~/Views/Shared/_LoginLayout.cshtml";
+}
+
+<h1>Register</h1>
+
+<h4>Happy registration</h4>
+<hr />
+<form method="post">
+    <label>Email:</label> <br />
+    <input type="text" name="Email" /><br />
+    <label>Name:</label> <br />
+    <input type="text" name="Name" /><br />
+    <label>Password:</label><br />
+    <input type="text" name="Password" /><br />
+    <label>ConfirmedPassword</label><br />
+    <input type="text" name="ConfirmedPassword" /><br />
+    <p>
+        <input type="submit" value="Register"/>
+    </p>
+</form>
+

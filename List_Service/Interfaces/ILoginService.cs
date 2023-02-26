@@ -1,17 +1,14 @@
-﻿using List_Domain.Models.NotDbEntity;
-using List_Domain.ModelDTO;
-using Microsoft.AspNetCore.Http;
+﻿using List_Domain.Models;
+using List_Domain.Models.NotDbEntity;
 
 namespace List_Service.Interfaces
 {
     public interface ILoginService 
     {
-        Task<UserDTO> Login(LoginModel model);
+        Task<bool> SignIn(LoginModel model);
 
-        Task<string> Register(RegisterModel model);
+        void SignOff();
 
-        Task<UserDTO> SendConfCode(string confirmationCode);
-
-        void SetHttpContext(HttpContext httpContext);
+        Task<User> Register(RegisterModel model);
     }
 }

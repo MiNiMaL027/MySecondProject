@@ -1,0 +1,23 @@
+﻿@using MySecondProjectWEB.Views.ViewHelpsModel;
+@using List_Domain.Exeptions;
+@model ContentStorageModel;
+
+<h2>Видалення списку</h2>
+
+<form method="post" id="my-form" action="/Home/DeleteList">
+
+    <label for="name">Список:</label>
+    <select name="listId">
+
+        @foreach(var list in Model._customLists)
+        {
+            <option value="@list.Id">@list.Name</option>
+        }
+
+    </select>
+    <p>
+        <input type="submit" value="Видалити" />
+    </p>
+
+</form>
+

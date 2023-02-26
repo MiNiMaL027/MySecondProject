@@ -1,11 +1,14 @@
 ﻿using List_Domain.CreateModel;
 using List_Domain.ViewModel;
 using List_Service.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Query;
+using System.Runtime.CompilerServices;
 
 namespace MySecondProject.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class ToDoTaskController : Controller
@@ -24,6 +27,12 @@ namespace MySecondProject.Controllers
             IQueryable<ViewToDoTask> retrivalToDoTask = await _toDoTaskService.GetByUserId();
 
             return Ok(retrivalToDoTask);
+        }
+
+        [HttpGet("byListName")]
+        public async Task<ActionResult<List<ViewToDoTask>>> GetByListName(string listName)
+        {
+            return Ok(await _toDoTaskService.GetByListName(listName));
         }
     
         [HttpPost]

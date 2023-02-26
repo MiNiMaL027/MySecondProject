@@ -1,0 +1,45 @@
+﻿@using MySecondProjectWEB.Views.ViewHelpsModel;
+@using List_Domain.Exeptions;
+@using List_Domain.Enums;
+@model ContentStorageModel;
+
+<h2>Оновлення Завдання</h2>
+
+<form id="my-form" method="post" action="/Home/AddTask">
+    <label>Виберіть яке завдання обновити:</label>
+    <select name="taskId">
+        @foreach(var task in Model._toDoTasks)
+        {
+            <option value="@task.Id">@task.Title</option>
+        }
+    </select>
+    <label for="listName">Список:</label>
+    <select name="listName">
+
+        @foreach (var list in Model._customLists)
+        {
+            @if (@list.Name == ViewBag.listName)
+            {
+                <option value="@list.Name" selected="selected">@list.Name</option>
+            }
+            else
+            {
+                <option value="@list.Name">@list.Name</option>              
+            }
+        }
+    </select>
+    <label for="name">Назва Завдання:</label>
+    <input type="text" id="name" name="Title"><br><br>
+    <label for="name">Опис Завдання:</label>
+    <input type="text" id="desc" name="Description"><br><br>
+    <label for="name">Важливість:</label><br />
+    <select name="Importance">
+        <option value="@Importance.Low">Низька</option>
+        <option value="@Importance.Normal">Нормальна</option>
+        <option value="@Importance.High">Висока</option>
+    </select>
+    <input name="IsFavorite" type="radio" value="true" />
+    <span>Favorite</span><br />
+    <br />
+    <input type="submit" value="Оновити">
+</form>

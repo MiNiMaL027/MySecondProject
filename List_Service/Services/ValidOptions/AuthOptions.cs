@@ -84,38 +84,6 @@ namespace List_Service.Services.ValidOptions
             }
 
             return new string(confirmationCodeChar);
-        }
-
-        private static ClaimsIdentity GetIdentity(EmailConfirmationCode emailConfirmationCode)
-        {
-            var claims = new List<Claim>
-            {
-                new Claim(ClaimsIdentity.DefaultNameClaimType, emailConfirmationCode.Email),
-                new Claim(ClaimsIdentity.DefaultRoleClaimType, "User"),
-                new Claim("TempPass", emailConfirmationCode.Password)
-            };
-
-            var claimsIdentity = new ClaimsIdentity(claims, "Token", ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);
-
-            return claimsIdentity;
-        }
-
-        public static string GenerateJwtTokenFromEmailConfirmation(EmailConfirmationCode emailConfirmationCode)
-        {
-            var identity = GetIdentity(emailConfirmationCode);
-            var now = DateTime.UtcNow;
-
-            var jwt = new JwtSecurityToken(
-            issuer: AuthOptions.ISSUER,
-            audience: AuthOptions.AUDIENCE,
-            notBefore: now,
-            claims: identity.Claims,
-            expires: now.Add(TimeSpan.FromMinutes(AuthOptions.LIFETIME_MINUTES)),
-
-            signingCredentials: new SigningCredentials(AuthOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));
-            var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
-
-            return encodedJwt;
-        }
+        }     
     }
 }
