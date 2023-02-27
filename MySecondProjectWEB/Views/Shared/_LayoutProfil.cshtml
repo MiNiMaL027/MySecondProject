@@ -20,17 +20,30 @@
         .listPosition-div {
             margin-left: 20px;
         }
+
+        .nav {
+            background-color: #333;
+            color: #fff;
+            padding: 0px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 999;
+        }
     </style>
     <meta name="viewport" content="width=device-width" />
     <title>Profil</title>
 </head>
 <body>
-    <div class="listPosition-div">
-        <a class="textWithoutLine-a" href="/Home/HomePage">
-            <h2>ToDoList</h2>
-        </a>
+    <div class="nav">
+        <div class="listPosition-div">
+            <a class="textWithoutLine-a" href="/Home/HomePage">
+                <h2 style="color:white">ToDoList</h2>
+            </a>
+        </div>
+        <div class="leftPosition-div"><a style="font-size: 20px" class="link-light" href="/Login/SignOut">SignOut </a>  ||  <a style="font-size: 20px" class="link-light" href="/Home/HomePage">Home</a></div><br />
     </div>
-    <div class="leftPosition-div"><a href="/Login/SignOut">SignOut </a>  ||  <a href="/Home/HomePage">Home</a></div><br />
     <div>
         @RenderBody()
     </div>

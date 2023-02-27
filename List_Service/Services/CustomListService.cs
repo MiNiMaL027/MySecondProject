@@ -25,6 +25,8 @@ namespace List_Service.Services
         public async Task<int> Add(CreateCustomList item)
         {
             var userId = _authService.GetUserId();
+            if (item.Name == null)
+                throw new NotFoundException();
 
             item.Name = item.Name.Trim();
 
