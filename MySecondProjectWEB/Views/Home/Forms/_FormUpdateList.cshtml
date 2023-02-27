@@ -7,7 +7,7 @@
 <form method="post" id="my-form" action="/Home/UpdateList">
 
     <label for="currentList">Список для обновлення:</label><br />
-    <select name="listId">
+    <select class="form-select" aria-label="Default select example" name="listId">
 
         @foreach(var list in Model._customLists)
         {
@@ -15,10 +15,10 @@
         }
 
     </select> <br />
-    <label for="updateList">Обновлені дані:</label> <br />
+    <h3 for="updateList">Обновлені дані:</h3> <br />
     <label for="updateList">Ім'я списку:</label><br />
 
-    <input type="text" name="Name"/>
+    <input class="form-control" placeholder="ListName" type="text" name="Name" />
     <br /><br />
     <p>
         <input class="btn btn-light" type="submit" value="Вибрати" />

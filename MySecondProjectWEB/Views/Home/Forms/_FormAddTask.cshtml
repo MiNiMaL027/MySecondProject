@@ -6,8 +6,8 @@
 <h2>Створення Завдання</h2>
 
 <form id="my-form" method="post" action="/Home/AddTask">
-    <label for="listName">Список:</label>
-    <select name="listName">
+    <label for="ListName">Список:</label>
+    <select class="form-select" aria-label="Default select example" name="listName">
 
         @foreach (var list in Model._customLists)
         {
@@ -21,18 +21,18 @@
             }
         }
     </select>
+    <br />
     <label for="name">Назва Завдання:</label>
-    <input type="text" id="name" name="Title"><br><br>
+    <input class="form-control" placeholder="Name" type="text" id="name" name="Title"><br>
     <label for="name">Опис Завдання:</label>
-    <input type="text" id="desc" name="Description"><br><br>
+    <input class="form-control" placeholder="Description" type="text" id="desc" name="Description"><br>
     <label for="name">Важливість:</label><br />
-    <select name="Importance">
+    <select class="form-select" aria-label="Default select example" name="Importance">
         <option value="@Importance.Low">Низька</option>
         <option value="@Importance.Normal">Нормальна</option>
         <option value="@Importance.High">Висока</option>
     </select>
-    <input name="IsFavorite" type="radio" value="true" />
+    <input name="IsFavorite" type="checkbox" value="true" />
     <span>Favorite</span><br />
-    <br />
     <input class="btn btn-light" type="submit" value="Створити">
 </form>

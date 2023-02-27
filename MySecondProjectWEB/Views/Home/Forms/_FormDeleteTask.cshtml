@@ -7,14 +7,13 @@
 <form method="post" id="my-form" action="/Home/DeleteTask">
 
     <label for="name">Список:</label>
-    <select name="taskId">
+    <select class="form-select" aria-label="Default select example" name="taskId">
 
         @foreach (var task in Model._toDoTasks)
         {
             <option value="@task.Id">@task.Title</option>
         }
     </select>
-    <br />
     <br />
     <p>
         <input class="btn btn-light" type="submit" value="Видалити" />

@@ -7,7 +7,7 @@
 <form method="post" id="my-form" action="/Home/DeleteList">
 
     <label for="name">Список:</label>
-    <select name="listId">
+    <select class="form-select" aria-label="Default select example" name="listId">
 
         @foreach(var list in Model._customLists)
         {
@@ -15,7 +15,6 @@
         }
 
     </select>
-    <br />
     <br />
     <p>
         <input class="btn btn-light" type="submit" value="Видалити" />
