@@ -8,6 +8,6 @@ namespace List_Domain.Models
 
         public bool IsDeleted { get; set; }
 
-        public virtual List<ToDoTask>? Tasks { get; set; } = new();
+        public virtual List<ToDoTask>? Tasks { get; set; } = new List<ToDoTask>();
     }
 }

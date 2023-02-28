@@ -6,8 +6,6 @@
 
         Task<IQueryable<T>> GetByUser(int userId);
 
-        Task<T> GetById(int Id);
-
         Task<List<int>> Remove(List<int> ids);
 
         Task<bool> Update(T item);

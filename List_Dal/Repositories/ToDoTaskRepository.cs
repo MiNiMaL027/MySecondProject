@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace List_Dal.Repositories
 {
-    public class ToDoTaskRepository : IToDoTaskRepository
+    public class ToDoTaskRepository : IToDoTaskRepository ,IChekAuthorization<ToDoTask>
     {
         private readonly ApplicationContext db;
         private readonly DbSet<ToDoTask> dbSet;
@@ -48,6 +48,16 @@ namespace List_Dal.Repositories
         public async Task<ToDoTask> GetById(int Id)
         {
             return await dbSet.FirstOrDefaultAsync(x => x.Id == Id);
+        }
+
+        public async Task<List<ToDoTask>> GetByListName(string listName, int userId)
+        {
+            var list = await db.Set<CustomList>().FirstAsync(x => x.Name == listName && x.UserId == userId && x.IsDeleted == false);
+
+            if (list == null)
+                throw new NotFoundException($"{listName} -- Not Exist");
+
+            return await dbSet.Where(t => t.CustomListId == list.Id && t.IsDeleted == false && t.UserId == userId).ToListAsync();
         }
 
         public async Task<IQueryable<ToDoTask>> GetByUser(int userId)

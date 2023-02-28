@@ -1,0 +1,228 @@
+﻿@using MySecondProjectWEB.Views.ViewHelpsModel;
+@using List_Domain.Exeptions;
+@model ContentStorageModel;
+@{
+    ViewData["Title"] = "Home";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script>
+    function buttonAddListClick(sender){
+        if(sender.innerHTML === "+"){
+            document.getElementById("formAddList").style.display = "block";
+            sender.innerHTML = "Х";
+        }
+        else{
+            document.getElementById("formAddList").style.display = "none";
+            sender.innerHTML = "+";
+        }     
+    }
+    function buttonDeleteListClick(sender){
+        if(sender.innerHTML === "-"){
+            document.getElementById("formDeleteList").style.display = "block";
+            sender.innerHTML = "Х";
+        }
+        else{
+            document.getElementById("formDeleteList").style.display = "none";
+            sender.innerHTML = "-";
+        }   
+    }
+    function buttonUpdateListClick(sender) {
+        if (sender.innerHTML === "*") {
+            document.getElementById("formUpdateList").style.display = "block";
+            sender.innerHTML = "Х";
+        }
+        else {
+            document.getElementById("formUpdateList").style.display = "none";
+            sender.innerHTML = "*";
+        }
+    }
+    function buttonAddTaskClick(sender){
+        if(sender.innerHTML === "+"){
+            document.getElementById("formAddTask").style.display = "block";
+            sender.innerHTML = "Х";
+        }
+        else{
+            document.getElementById("formAddTask").style.display = "none";
+            sender.innerHTML = "+";
+        }
+    }
+    function buttonDeleteTaskClick(sender) {
+        if (sender.innerHTML === "-") {
+            document.getElementById("formDeleteTask").style.display = "block";
+            sender.innerHTML = "Х";
+        }
+        else {
+            document.getElementById("formDeleteTask").style.display = "none";
+            sender.innerHTML = "-";
+        }
+    }
+    function buttonUpdateTaskClick(sender){
+        if (sender.innerHTML === "*") {
+            document.getElementById("formUpdateTask").style.display = "block";
+            sender.innerHTML = "Х";
+        }
+        else {
+            document.getElementById("formUpdateTask").style.display = "none";
+            sender.innerHTML = "*";
+        }
+    }
+</script>
+
+@section Lists{
+<div >
+    <br />
+    <button class="btn btn-outline-primary" name="add-form" id="show-form-button" onclick="buttonAddListClick(this)">+</button>
+    <div id="formAddList" style="display: none">
+        @Html.Partial("Forms/_FormAddList")
+    </div>
+
+    @if(Model._customLists != null)
+        {
+        <button class="btn btn-outline-primary" name="delete-form" id="show-form-button" onclick="buttonDeleteListClick(this)">-</button>
+        <div id="formDeleteList" style="display: none">
+            @Html.Partial("Forms/_FormDeleteList")
+        </div>
+            <button class="btn btn-outline-primary" name="update-form" id="show-form-button" onclick="buttonUpdateListClick(this)">*</button>
+        <div id="formUpdateList" style="display: none">
+            @Html.Partial("Forms/_FormUpdateList")
+        </div>
+        <hr />
+        <form action="/Home/BaseList" method="get">
+            <h2 for="List">Виберіть Список:</h2>
+            <div style="margin-right: 150px">
+                <div style="display: flex; flex-direction: row-reverse; align-items: center; gap: 10px;">
+                    <input class="form-check-input" name="baseListId" type="radio" value="1" />
+                    <label class="form-check-label">Today's Tasks</label><br />
+                </div>
+                    <div style="display: flex; flex-direction: row-reverse; align-items: center; gap: 10px;">
+                    <input class="form-check-input" name="baseListId" type="radio" value="2" />
+                    <label class="form-check-label">All Tasks</label><br />
+                </div>
+                    <div style="display: flex; flex-direction: row-reverse; align-items: center; gap: 10px;">
+                    <input class="form-check-input" name="baseListId" type="radio" value="3" />
+                    <label class="form-check-label">Importance Tasks</label><br />
+                </div>
+                    <div style="display: flex; flex-direction: row-reverse; align-items: center; gap: 10px;">
+                    <input class="form-check-input" name="baseListId" type="radio" value="4" />
+                    <label class="form-check-label">Planned Tasks</label><br />
+                </div>
+                <br>
+                <p>
+                    <input class="btn btn-light name="baselist" type="submit" value="Завдання" />
+                </p>
+            </div>
+        </form>
+            <hr />
+            <h2>Ваші Списки:</h2>
+        <form action="/Home/CustomList" method="get">
+           <p>              
+                @foreach (var list in Model._customLists)
+                {
+                    <br />
+                    <label>
+                         <input class="btn btn-dark" type="submit" name="listName" value="@list.Name"><br />
+                    </label><br />
+                }
+
+           </p>  
+        </form>
+       
+    }
+</div>
+}   
+
+<div>
+    @section Tasks{   
+       
+        @if (ViewBag.listName != null)
+        {
+            <h1>@ViewBag.listName</h1>
+            @if (Model._toDoTasks == null)
+            {
+                <button class="btn btn-outline-primary" name="add-form" id="show-form-button" onclick="buttonAddTaskClick(this)">+</button>
+                <div id="formAddTask" style="display: none">
+                    @Html.Partial("Forms/_FormAddTask")
+                </div>
+                <hr />
+                <div>
+                    <label> Список пустий </label>
+                </div>
+               
+            }
+            else
+            {
+                <div >
+                    <div class="btn-group" role="group" aria-label="Basic mixed styles example">
+                        <button class="btn btn-outline-primary" name="add-form" id="show-form-button" onclick="buttonAddTaskClick(this)">+</button>
+                        <div id="formAddTask" style="display: none">
+                            @Html.Partial("Forms/_FormAddTask")
+                        </div>                   
+                        <button class="btn btn-outline-primary" name="delete-form" id="show-form-button" onclick="buttonDeleteTaskClick(this)">-</button>
+                        <div id="formDeleteTask" style="display: none">
+                            @Html.Partial("Forms/_FormDeleteTask")
+                        </div>
+                        <button class="btn btn-outline-primary" name="update-form" id="show-form-button" onclick="buttonUpdateTaskClick(this)">*</button><br />
+                        <div id="formUpdateTask" style="display: none">
+                            @Html.Partial("Forms/_FormUpdateTask")
+                        </div>
+                    </div>
+                    <hr />
+                    <ul>
+                        @foreach (var item in Model._toDoTasks)
+                        {
+                            <li>
+                                <div>                                  
+                                    <h2>@item.Title</h2><br />
+                                    <label>@item.Description</label><br />
+                                    <label>Importance -- @item.Importance</label><br />
+                                    <label>CreationData -- @item.CreationDate</label><br />
+                                    <label>Favorite -- @item.IsFavorite</label><br />
+
+                                    @if (item.DueToDate != null)
+                                    {
+                                        <label>CreationData -- @item.DueToDate</label> <br />
+                                    }                                 
+                                </div>
+                            </li>
+                        }
+                    </ul>
+                </div>            
+            }
+        }
+        else if(ViewBag.baseListId != null)
+        {
+            @if (Model._toDoTasks == null)
+            {
+                <div>
+                    <label> Список пустий </label>
+                </div>
+            }
+            else
+            {
+                <div>
+                    <ul>
+                        @foreach (var item in Model._toDoTasks)
+                        {
+                            <li>
+                                <div>
+                                    <h2>@item.Title</h2><br />
+                                    <label>@item.Description</label><br />
+                                    <label>Importance -- @item.Importance</label><br />
+                                    <label>CreationDate -- @item.CreationDate</label><br />
+                                    <label>Favorite -- @item.IsFavorite</label><br />
+
+                                    @if (item.DueToDate != null)
+                                    {
+                                        <label>DueDate -- @item.DueToDate</label> <br />
+                                    }
+                                </div>
+                            </li>
+                        }
+                    </ul>
+                </div>              
+            }
+        }
+    }
+</div>
+

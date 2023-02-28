@@ -10,15 +10,17 @@ namespace List_Service.Mapper
     {
         public AppMappingProfile()
         {
-            CreateMap<CreateCustomList, CustomList>();
+            CreateMap<CreateCustomList, CustomList>().ReverseMap();
 
             CreateMap<CustomList, ViewCustomList>().ReverseMap();
 
             CreateMap<ViewToDoTask, ToDoTask>().ReverseMap();
 
-            CreateMap<CreateToDoTask, ToDoTask>();
+            CreateMap<CreateToDoTask, ToDoTask>().ReverseMap();
 
             CreateMap<UserDTO, User>().ReverseMap();
+
+            CreateMap<ViewSettings, Settings>().ReverseMap();
         }
     }
 }

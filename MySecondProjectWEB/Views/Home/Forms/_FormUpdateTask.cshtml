@@ -1,0 +1,47 @@
+﻿@using MySecondProjectWEB.Views.ViewHelpsModel;
+@using List_Domain.Exeptions;
+@using List_Domain.Enums;
+@model ContentStorageModel;
+
+<h2>Оновлення Завдання</h2>
+
+<form id="my-form" method="post" action="/Home/AddTask">
+    <label>Виберіть яке завдання обновити:</label>
+    <select class="form-select" aria-label="Default select example" name="taskId">
+        @foreach(var task in Model._toDoTasks)
+        {
+            <option value="@task.Id">@task.Title</option>
+        }
+    </select>
+    <br />
+    <label for="listName">Список:</label>
+    <select class="form-select" aria-label="Default select example" name="listName">
+
+        @foreach (var list in Model._customLists)
+        {
+            @if (@list.Name == ViewBag.listName)
+            {
+                <option value="@list.Name" selected="selected">@list.Name</option>
+            }
+            else
+            {
+                <option value="@list.Name">@list.Name</option>              
+            }
+        }
+    </select>
+    <br />
+    <label for="name">Назва Завдання:</label>
+    <input class="form-control" placeholder="Name" type="text" id="name" name="Title"><br>
+    <label for="name">Опис Завдання:</label>
+    <input class="form-control" placeholder="Description" type="text" id="desc" name="Description"><br>
+    <label for="name">Важливість:</label><br />
+    <select class="form-select" aria-label="Default select example" name="Importance">
+        <option value="@Importance.Low">Низька</option>
+        <option value="@Importance.Normal">Нормальна</option>
+        <option value="@Importance.High">Висока</option>
+    </select>
+    <input name="IsFavorite" type="checkbox" value="true" />
+    <span>Favorite</span><br />
+    <br />
+    <input class="btn btn-light" type="submit" value="Оновити">
+</form>

@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace List_Dal.Repositories
 {
-    public class CustomListRepository : ICustomListRepository
+    public class CustomListRepository : ICustomListRepository, IChekAuthorization<CustomList>
     {
         private readonly ApplicationContext db;
         private readonly DbSet<CustomList> dbSet;

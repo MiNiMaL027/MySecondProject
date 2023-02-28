@@ -1,13 +1,9 @@
-﻿namespace List_Domain.Models
+﻿using Microsoft.AspNetCore.Identity;
+
+namespace List_Domain.Models
 {
-    public class User
+    public class User : IdentityUser<int>
     {
-        public int Id { get; set; }
-
         public string? Name { get; set; }
-
-        public string Email { get; set; } 
-
-        public string? Password { get; set; }
     }
 }

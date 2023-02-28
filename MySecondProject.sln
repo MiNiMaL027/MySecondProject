@@ -3,13 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33103.184
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MySecondProject", "MySecondProject\MySecondProject.csproj", "{9E6B377C-502E-40B8-828E-DC80CAB0A80D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MySecondProject", "MySecondProject\MySecondProject.csproj", "{9E6B377C-502E-40B8-828E-DC80CAB0A80D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "List_Domain", "List_Domain\List_Domain.csproj", "{A85E3C63-C7A3-4836-B647-8825997587AC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "List_Domain", "List_Domain\List_Domain.csproj", "{A85E3C63-C7A3-4836-B647-8825997587AC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "List_Service", "List_Service\List_Service.csproj", "{EFF16A46-84B6-4927-B106-656A80474BF9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "List_Service", "List_Service\List_Service.csproj", "{EFF16A46-84B6-4927-B106-656A80474BF9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "List_Dal", "List_Dal\List_Dal.csproj", "{C36B901C-1305-4722-97CC-9D29FA88D374}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "List_Dal", "List_Dal\List_Dal.csproj", "{C36B901C-1305-4722-97CC-9D29FA88D374}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataBaseSeeder", "DataBaseSeeder\DataBaseSeeder.csproj", "{86A64EC5-57B9-453C-A9C5-60E4B02847D1}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MySecondProjectWEB", "MySecondProjectWEB\MySecondProjectWEB.csproj", "{1A5EEDDC-ABC3-4A34-BDA2-5B9DF03E604F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +37,14 @@ Global
 		{C36B901C-1305-4722-97CC-9D29FA88D374}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C36B901C-1305-4722-97CC-9D29FA88D374}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C36B901C-1305-4722-97CC-9D29FA88D374}.Release|Any CPU.Build.0 = Release|Any CPU
+		{86A64EC5-57B9-453C-A9C5-60E4B02847D1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{86A64EC5-57B9-453C-A9C5-60E4B02847D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{86A64EC5-57B9-453C-A9C5-60E4B02847D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{86A64EC5-57B9-453C-A9C5-60E4B02847D1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1A5EEDDC-ABC3-4A34-BDA2-5B9DF03E604F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1A5EEDDC-ABC3-4A34-BDA2-5B9DF03E604F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1A5EEDDC-ABC3-4A34-BDA2-5B9DF03E604F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1A5EEDDC-ABC3-4A34-BDA2-5B9DF03E604F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

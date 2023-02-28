@@ -14,7 +14,7 @@ namespace List_Domain.CreateModel
 
         public Importance? Importance { get; set; }
 
-        public int ListId { get; set; }
+        public int CustomListId { get; set; }
     }
 }
 

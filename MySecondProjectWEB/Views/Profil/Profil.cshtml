@@ -1,0 +1,82 @@
+﻿@using MySecondProjectWEB.Views.ViewHelpsModel;
+@model SettingUserModel;
+
+@{
+    ViewData["Title"] = "Profil";
+    Layout = "~/Views/Shared/_LayoutProfil.cshtml";
+}
+
+<script>
+    function buttonSettingClick(sender){
+        if (sender.innerHTML === "setting") {
+            document.getElementById("HideSetting").style.display = "block";
+            sender.innerHTML = "Х";
+        }
+        else {
+            document.getElementById("HideSetting").style.display = "none";
+            sender.innerHTML = "setting";
+        }
+    }
+</script>
+<style>
+    .center-div {
+        width: 50%;
+        margin: 0 auto;
+    }
+    .setting-div{
+        position: fixed;
+        top: 10;
+        right: 10;
+    }
+
+    .parent {
+        position: relative;
+        height: 100vh;
+    }
+
+    .child {
+        position: absolute;
+        top: 40%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+    }
+</style>
+<div class="parent">
+    <div style="ma" class="child">
+        <h1>@Model.UserName</h1>
+        @if(Model.Settings != null)
+        {
+            <div>
+                <button name="form" id="show-form-button" onclick="buttonSettingClick(this)">setting</button>
+                <div id="HideSetting" style="display: none">
+                    @Html.Partial("Forms/_FormUpdateSettings")
+                </div>
+            </div>
+            <br />
+            <label>AllowNotification - </label>
+            <label>@Model.Settings.AllowNotification</label>
+            <br />
+            <label>Current list - </label>
+            <label>@Model.Settings.DefaultListId</label>
+            <br />
+        }
+        else
+        {
+            <div>
+                <button style="width: 200px; height: 50px;" name="form" id="show-form-button" onclick="buttonSettingClick(this)">-</button>
+                <div id="HideSetting" style="display: none">
+                    @Html.Partial("Forms/_FormAddSettings")
+                </div>
+            </div>
+            <br />
+            <label>AllowNotification - </label>
+            <label>False</label>
+            <br />
+            <label>Current list - </label>
+            <label>None</label>
+            <br />
+        }
+    </div>
+</div>
+

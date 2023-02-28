@@ -1,136 +1,75 @@
-﻿using AcumaticaExternalAppServer;
-using AutoMapper;
-using List_Dal.Interfaces;
-using List_Domain.Exeptions;
-using List_Domain.ModelDTO;
+﻿using List_Domain.Exeptions;
 using List_Domain.Models;
 using List_Domain.Models.NotDbEntity;
 using List_Service.Interfaces;
-using List_Service.Services.ValidOptions;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 
 namespace List_Service.Services
 {
+    [AllowAnonymous]
     public class LoginService : ILoginService
     {
-        private readonly ILoginRepository _repository;
-        private readonly IMapper _mapper;
-        private HttpContext _httpContext;
+        private readonly UserManager<User> _userManager;
+        private readonly SignInManager<User> _signInManager;
 
-        public LoginService(ILoginRepository repository, IMapper mapper)
+        public LoginService(UserManager<User> userManager, SignInManager<User> signInManager)
         {
-            _mapper= mapper;
-            _repository = repository;
+            _userManager = userManager;
+            _signInManager = signInManager;
         }
 
-        public void SetHttpContext(HttpContext httpContext)
+        [Authorize]
+        public async Task<bool> SignIn(LoginModel model)
         {
-            _httpContext = httpContext;
-        }
+            var user = await _userManager.FindByEmailAsync(model.Email);
 
-        public async Task<UserDTO> Login(LoginModel model)
-        {
-            var hashed = AuthOptions.PasswordHashing.GetHashedPassword(model.Password);
+            var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, lockoutOnFailure: false);
 
-            var user = await _repository.FindLoginModel(model.Email, hashed);
             if (user == null)
-                throw new Exception("User does not exist");
+                throw new LoginException();
 
-            var userDto = _mapper.Map<UserDTO>(user);
-            userDto.EncodedJwt = AuthOptions.GetUserToken(user);
+            if (result == null)
+                throw new LoginException();
 
-            return userDto;                      
+            if (result.Succeeded)
+                return true;
+
+            if (result.RequiresTwoFactor)
+                throw new LoginException();
+
+            if (result.IsLockedOut)
+                throw new LoginException();
+
+            throw new LoginException();
         }
 
-        public async Task<string> Register(RegisterModel model)
+        public async void SignOff()
         {
-            var user = await _repository.GetRegisterModelByEmail(model.Email);
+            await _signInManager.SignOutAsync();
+        }
 
-            if (user != null)
-                throw new LoginException("User with such email is already registered");
+        public async Task<User> Register(RegisterModel model)
+        {
+            if (model.Password != model.ConfirmedPassword)
+                throw new LoginException();
 
-            var hashed = AuthOptions.PasswordHashing.GetHashedPassword(model.Password);
-            var existingEmailConfirmation = await _repository.GetEmailConfirmationCode(model.Email, hashed);
-
-            if(existingEmailConfirmation != null)
-                await _repository.RemoveCode(existingEmailConfirmation);
-
-            var confirmationCode = AuthOptions.GetRandomEmailConfirmationCode();
-            var IsMailResult = Emailer.SendEmail(model.Email, "Email confirmation", $"Confirmation code: {confirmationCode}");
-
-            if (IsMailResult == false)
-                throw new LoginException("Can't send confirmation code to your email. Try again later");
-
-            var emailConfirmationCode = new EmailConfirmationCode()
+            var user = new User
             {
-                Email = model.Email,
-                Password = hashed,
                 Name = model.Name,
-                ConfirmationCode = confirmationCode,
-                DateCreation = DateTime.Now,
-                EmailConfirmationLeftAttempts = 3
+                UserName = model.Email,
+                Email = model.Email,
             };
 
-            await _repository.AddCode(emailConfirmationCode);
+            var result = await _userManager.CreateAsync(user, model.Password);
 
-            return AuthOptions.GenerateJwtTokenFromEmailConfirmation(emailConfirmationCode);
-        }
-
-        public async Task<UserDTO> SendConfCode(string confirmationCode)
-        {
-            var password = _httpContext.User.Claims.FirstOrDefault(c => c.Type == "TempPass").Value;
-            var email = _httpContext.User.Identity.Name;
-
-            var emailConfirmationCode = await _repository.GetEmailConfirmationCode(password, email, confirmationCode);
-
-            if(emailConfirmationCode == null)
+            if (result.Succeeded)
             {
-                var emailConfirmationCodes = await _repository.GetAllEmailConfirmationCodes(password, email);
-
-                for(int i = 0; i < emailConfirmationCodes.Count(); i++) 
-                {
-                    emailConfirmationCodes[i].EmailConfirmationLeftAttempts--;
-
-                    if (emailConfirmationCodes[i].EmailConfirmationLeftAttempts <= 0)
-                    {
-                        await _repository.RemoveCode(emailConfirmationCodes[i]);
-                        emailConfirmationCodes.RemoveAt(i);
-                        i--;
-                    }
-                }
-
-                if (emailConfirmationCodes.Count == 0)
-                    throw new LoginException("Invalid confirmation code. No attempts remaining. Pass registration again");
-                else
-                    throw new LoginException("Invalid confirmation code");
+                await _signInManager.SignInAsync(user, isPersistent: false);
+                return user;
             }
 
-            var isExpired = DateTime.Now - emailConfirmationCode.DateCreation > TimeSpan.FromMinutes(30);
-
-            if(isExpired)
-            {
-                 await _repository.RemoveCode(emailConfirmationCode);
-
-                throw new LoginException("Your confirmation code has expired. Pass registration again");
-            }
-
-            var newUser = new User()
-            {
-                Email = email,
-                Password = password,
-                Name = emailConfirmationCode.Name,
-            };
-
-            await _repository.AddUser(newUser);
-
-            var emailConfirmationCodesToDelete = await _repository.GetAllEmailConfirmationCodes(password, email);
-
-            await _repository.RemoveFewCode(emailConfirmationCodesToDelete);
-
-            var userDTO = _mapper.Map<UserDTO>(newUser);
-            userDTO.EncodedJwt = AuthOptions.GetUserToken(newUser);
-
-            return userDTO;
+            throw new LoginException();
         }
     }
 }

@@ -5,7 +5,7 @@ using List_Domain.Exeptions;
 using List_Domain.Models;
 using List_Domain.ViewModel;
 using List_Service.Interfaces;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 
 namespace List_Service.Services
 {
@@ -15,8 +15,6 @@ namespace List_Service.Services
         private readonly IMapper _mapper;
         private readonly IAutorizationService<CustomList> _authService;
 
-        private HttpContext? _httpContext;
-
         public CustomListService(ICustomListRepository customListRepository, IMapper mapper, IAutorizationService<CustomList> authService)
         {
             _mapper= mapper;
@@ -24,16 +22,11 @@ namespace List_Service.Services
             _authService = authService;
         }
 
-        public void SetHttpContext(HttpContext httpContext)
-        {
-            _httpContext = httpContext;
-        }
-
         public async Task<int> Add(CreateCustomList item)
         {
-            _authService.SetUserId(_httpContext);
-
             var userId = _authService.GetUserId();
+            if (item.Name == null)
+                throw new NotFoundException();
 
             item.Name = item.Name.Trim();
 
@@ -53,8 +46,6 @@ namespace List_Service.Services
 
         public async Task<IQueryable<ViewCustomList>> GetByUserId()
         {
-            _authService.SetUserId(_httpContext);
-
             var userId = _authService.GetUserId();
             var items = await _customListRepository.GetByUser(userId);
 
@@ -63,8 +54,6 @@ namespace List_Service.Services
 
         public async Task<List<int>> Remove(List<int> ids)
         {
-            _authService.SetUserId(_httpContext);
-
             foreach (int id in ids)
                 _authService.AuthorizeUser(id);
 
@@ -73,7 +62,6 @@ namespace List_Service.Services
 
         public async Task<int> Update(CreateCustomList item, int listId)
         {
-            _authService.SetUserId(_httpContext);
             _authService.AuthorizeUser(listId);
 
             var userId = _authService.GetUserId();
