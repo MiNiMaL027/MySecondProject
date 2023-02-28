@@ -1,11 +1,13 @@
 ﻿using List_Domain.Models.NotDbEntity;
 using Microsoft.AspNetCore.Mvc;
 using List_Service.Interfaces;
-using MySecondProject.Filters;
-using List_Domain.ModelDTO;
+using List_Service.Filters;
+using List_Domain.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MySecondProject.Controllers
 {
+    [AllowAnonymous]
     [NotImplExceptionFilter]
     public class LoginController : Controller
     {
@@ -14,26 +16,26 @@ namespace MySecondProject.Controllers
         public LoginController(ILoginService service)
         {
             _service= service;
-        }      
+        }
 
+        [Authorize]
         [HttpPost("login")]
-        public async Task<ActionResult<UserDTO>> Login(LoginModel model)
+        public async Task<ActionResult<User>> Login(LoginModel model)
         {
-            return Ok(await _service.Login(model));
+            return Ok(await _service.SignIn(model));
+        }
+
+        [HttpDelete("logOut")]
+        public async Task<ActionResult> LogOut()
+        {
+            _service.SignOff();
+            return Ok();
         }
 
         [HttpPost("register")]
-        public async Task<ActionResult<string>> Register(RegisterModel model)
+        public async Task<ActionResult<User>> Register(RegisterModel model)
         {
             return Ok(await _service.Register(model));
-        }
-
-        [HttpGet("sendConfirmationCode/{confirmationCode}")]
-        public async Task<ActionResult<UserDTO>> SendConfirmationCode(string confirmationCode)
-        {
-            _service.SetHttpContext(HttpContext);
-
-            return Ok(await _service.SendConfCode(confirmationCode));
         }
     }
 }

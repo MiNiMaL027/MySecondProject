@@ -7,5 +7,7 @@ namespace List_Dal.Interfaces
         Task<bool> CheckIfNameExist(string title, int uresId);
 
         Task<bool> CompleteTask(int id);
+
+        Task<List<ToDoTask>> GetByListName(string listName, int userId);
     }
 }

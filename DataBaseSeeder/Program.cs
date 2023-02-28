@@ -22,13 +22,6 @@ namespace DataBaseSeeder
 
             dataBase.Database.Migrate();
 
-            dataBase.Users.Add(new User
-            {
-                Email = "smeldoc@gmail.com",
-                Password = "PIrgcQjPgUpuyF8l+7CEo2bT+eebTyKYc+f1fDoGjLs=",
-                Name = "Andriy",
-            });
-
             dataBase.Settings.Add(new Settings
             {
                 AllowNotification = false,

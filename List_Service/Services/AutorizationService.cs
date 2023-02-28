@@ -2,7 +2,9 @@
 using List_Domain.Exeptions;
 using List_Domain.Models.NotDbEntity;
 using List_Service.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using System.Security.Claims;
 
 namespace List_Service.Services
 {
@@ -16,15 +18,13 @@ namespace List_Service.Services
         {
             _repository = repository;
             _httpContextAccessor = httpContextAccessor;
-            _currenUserID = Convert.ToInt32(httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
+            //_currenUserID = Convert.ToInt32(httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
+            _currenUserID = Convert.ToInt32(httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
         }
 
-        public void SetUserId(HttpContext httpContext)
+        public void SetUserId(int id)
         {
-            if (httpContext == null)
-                throw new NotFoundException();
-
-            _currenUserID = Convert.ToInt32(httpContext.User.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
+            _currenUserID = id;
         }
 
         public int GetUserId()

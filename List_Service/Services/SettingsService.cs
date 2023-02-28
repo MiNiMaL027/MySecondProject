@@ -4,7 +4,6 @@ using List_Domain.Exeptions;
 using List_Domain.Models;
 using List_Domain.ViewModel;
 using List_Service.Interfaces;
-using Microsoft.AspNetCore.Http;
 
 namespace List_Service.Services
 {
@@ -40,6 +39,9 @@ namespace List_Service.Services
         {
             var userId = _authService.GetUserId();
             var item = await _repository.GetSettingsByUser(userId);
+
+            if(item == null)
+                throw new NotFoundException();
 
             return _mapper.Map<ViewSettings>(item);
         }
