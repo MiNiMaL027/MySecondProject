@@ -6,7 +6,8 @@ using MySecondProjectWEB.Views.ViewHelpsModel;
 
 namespace MySecondProjectWEB.Controllers
 {
-    public class ProfilController : Controller
+    public class ProfilController : Controller // Взагалі клас крім оцього трайкетчу, якщо там нема різону чому він там стоїть то винести в мідлвеа,
+                                               // хочу бачити таким самим макаром всі контроллери, де метод викликає один метод сервісу і все, тут не має бути логіки взагалі, тільки наповнення модельок
     {
         private readonly ISettingsService _settingsService;
 
@@ -23,11 +24,15 @@ namespace MySecondProjectWEB.Controllers
         {
             try
             {
-                var model = new SettingUserModel() { UserName = HttpContext.User.Identity.Name, Settings = await _settingsService.GetSettingsByUser(), _customList = await _customListService.GetByUserId()};
+                var model = new SettingUserModel() // пофіксати всюди
+                {
+                    UserName = HttpContext.User.Identity?.Name ?? "Name not found", 
+                    Settings = await _settingsService.GetSettingsByUser(), 
+                    _customList = await _customListService.GetByUserId()};
 
                 return View(model);
             }
-            catch (NotFoundException)
+            catch (NotFoundException) 
             {
                 return View(new SettingUserModel() { UserName = HttpContext.User.Identity.Name, _customList = await _customListService.GetByUserId() }); 
             }

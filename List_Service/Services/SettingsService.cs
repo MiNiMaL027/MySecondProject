@@ -25,7 +25,7 @@ namespace List_Service.Services
             var item = await _repository.GetSettingsByUser(_authService.GetUserId());
 
             if (item != null)
-                throw new ValidationException();
+                throw new ValidationException(); // Олреді екзіст ексепшн
 
              var itemToDb = _mapper.Map<Settings>(settings);
             itemToDb.UserId = _authService.GetUserId();
@@ -53,8 +53,9 @@ namespace List_Service.Services
             return await _repository.RemoveSettings(id);
         }
      
-        public async Task<int> UpdateSetings(ViewSettings settings)
-        {                                                                   // Тут можна б було не тягнути айтем з БД,а зробити шо настройки мають таке саме айді як і Юзер,але ти скоріше за все скажеш шо то фігня)
+        public async Task<int> UpdateSetings(ViewSettings settings) // просто клич тут GetSettingsByUser() і воно в рази логіку упростить
+        {  
+            // Тут можна б було не тягнути айтем з БД,а зробити шо настройки мають таке саме айді як і Юзер,але ти скоріше за все скажеш шо то фігня) угу, молодець що подумав
             var userId = _authService.GetUserId();
             var item = await _repository.GetSettingsByUser(userId);
 
@@ -62,10 +63,11 @@ namespace List_Service.Services
 
             var itemToDb = _mapper.Map<Settings>(settings);
 
+            // нашо оце робити? думаю безкорисно, уяви що є адмін який може твої таски апдейтити, цей код буде пересувати його з твоїх тасок до тасок адміна і все вибухне
             itemToDb.UserId = userId;
             itemToDb.Id = item.Id;
 
-            if(!await _repository.UpdateSetings(itemToDb))
+            if(!await _repository.UpdateSetings(itemToDb))// якась дивна логіка
                 throw new NotFoundException();
 
             return itemToDb.Id;

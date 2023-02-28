@@ -1,6 +1,6 @@
 ﻿namespace List_Domain.ViewModel
 {
-    public class ViewSettings
+    public class ViewSettings // вю завжди має мати айді в собі
     {
         public bool AllowNotification { get; set; }
 

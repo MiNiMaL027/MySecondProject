@@ -11,7 +11,7 @@ using System.Collections.Generic;
 namespace MySecondProjectWEB.Controllers
 {
     [Authorize]
-    public class HomeController : Controller
+    public class HomeController : Controller // НІ НІ НІ, скільки разів говорити?? одна ететя один контроллер, розділити то всьо на хоум ліст і таск контроллери
     {
         private readonly ICustomListService _customListService;
         private readonly IToDoTaskService _toDoTaskService;
@@ -25,7 +25,11 @@ namespace MySecondProjectWEB.Controllers
         [HttpGet]
         public async Task<IActionResult> HomePage()
         {
-            var model = new ContentStorageModel() { _customLists = await _customListService.GetByUserId() };
+            //так краще
+            var model = new ContentStorageModel() 
+            {
+                _customLists = await _customListService.GetByUserId() 
+            };
 
             ViewBag.NotFound = false;
 
@@ -36,13 +40,19 @@ namespace MySecondProjectWEB.Controllers
         [ActionName("CustomList")]
         public async Task<IActionResult> CustomList(string listName)
         {
+            // нема сенсу з цього в трайкетчі
+            ViewBag.NotFound = false;
+            ViewBag.baseListId = null;
+            ViewBag.listName = listName;
+
             try
             {
-                ViewBag.NotFound = false;
-                ViewBag.baseListId = null;
-                ViewBag.listName = listName;
-
-                var model = new ContentStorageModel() { _toDoTasks = await _toDoTaskService.GetByListName(listName), _customLists = await _customListService.GetByUserId()};
+                // рядки не мають бути задовгі
+                var model = new ContentStorageModel() 
+                {
+                    _toDoTasks = await _toDoTaskService.GetByListName(listName),
+                    _customLists = await _customListService.GetByUserId()
+                };
 
                 return View("HomePage", model);
             }
@@ -66,11 +76,12 @@ namespace MySecondProjectWEB.Controllers
                 ViewBag.listName = null;
                 ViewBag.baseListId = baseListId;
 
+                // де ти бачив щоб хтось так в ряд лупашить?) всюди виправи
                 var model = new ContentStorageModel() { _toDoTasks = await _toDoTaskService.GetByBaseList(baseListId), _customLists = await _customListService.GetByUserId() };
 
                 return View("HomePage", model);
             }
-            catch(NotFoundException)
+            catch(NotFoundException)// оце треба винести в загальний фільтр, як в апішці, то точно якось робиться, нагугли ти робиш там редірект на спеціальну Вюшку з 404
             {
                 ViewBag.NotFound = true;
 
@@ -115,6 +126,7 @@ namespace MySecondProjectWEB.Controllers
         [HttpPost]
         public async Task<IActionResult> AddTask(CreateToDoTask task, string listName)
         {
+            // упрости, шукай сам як, багато тупих помилок, якби сів 5 хв подумав то побаичв би
             var lists = await _customListService.GetByUserId();
             var list = lists.FirstOrDefault(x => x.Name == listName);
 
@@ -126,14 +138,14 @@ namespace MySecondProjectWEB.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Deletetask(int taskId)
+        public async Task<IActionResult> Deletetask(int taskId) // треш якийсь, чому не написти просто сервіс.Ремув(Айді)
         {
             var tasks = await _toDoTaskService.GetByUserId();
             var task = tasks.FirstOrDefault(t => t.Id == taskId);
 
-            var currentList = _customListService.GetByUserId().GetAwaiter().GetResult().FirstOrDefault(l => l.Id == task.CustomListId);
+            var currentList = _customListService.GetByUserId().GetAwaiter().GetResult().FirstOrDefault(l => l.Id == task.CustomListId); /// .GetAwaiter().GetResult() ні ні ні, не має так бути
 
-            List<int> currenttask = new List<int> { taskId };
+            List<int> currenttask = new List<int> { taskId }; // шо це?? ваааркии
 
             await _toDoTaskService.Remove(currenttask);
 

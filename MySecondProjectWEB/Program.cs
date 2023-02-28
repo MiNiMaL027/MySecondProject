@@ -23,7 +23,7 @@ namespace MySecondProjectWEB
 
             builder.Services.AddAutoMapper(typeof(AppMappingProfile).Assembly);
 
-            // Add services to the container.
+            // Add services to the container.цей комент не пов*язаний з кодом який я бачу
             builder.Services.AddControllers();
             builder.Services.AddControllersWithViews(options =>
             options.Filters.Add(typeof(NotImplExceptionFilterAttribute)))
@@ -49,7 +49,7 @@ namespace MySecondProjectWEB
 
             builder.Services.AddHttpContextAccessor();
 
-            builder.Services.AddTransient<ILoginService, LoginService>();
+            builder.Services.AddTransient<ILoginService, LoginService>(); // чому не скоупт?
          
             var connection = builder.Configuration.GetConnectionString("DefaultConnection");
 
@@ -85,7 +85,7 @@ namespace MySecondProjectWEB
 
             });
 
-
+            //опа, два пустих рядка
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.

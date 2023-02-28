@@ -26,6 +26,7 @@ namespace List_Service.Services
 
             var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, lockoutOnFailure: false);
 
+            // обєднай в один іф, результат ж той самий
             if (user == null)
                 throw new LoginException();
 

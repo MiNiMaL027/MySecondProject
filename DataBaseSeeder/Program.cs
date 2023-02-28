@@ -11,7 +11,7 @@ namespace DataBaseSeeder
         static void Main(string[] args)
         {
             var config = new ConfigurationBuilder()
-            .AddJsonFile("appsetting.json")
+            .AddJsonFile("appsettings.json")
                 .Build();
 
             var dbContextOptions = new DbContextOptionsBuilder<ApplicationContext>()

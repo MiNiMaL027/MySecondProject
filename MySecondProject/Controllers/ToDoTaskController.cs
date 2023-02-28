@@ -4,7 +4,7 @@ using List_Service.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Query;
-using System.Runtime.CompilerServices;
+using System.Runtime.CompilerServices; // Лишнє
 
 namespace MySecondProject.Controllers
 {

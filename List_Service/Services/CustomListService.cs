@@ -25,12 +25,15 @@ namespace List_Service.Services
         public async Task<int> Add(CreateCustomList item)
         {
             var userId = _authService.GetUserId();
+
+            // створи кастом ліст валідатор і винеси тих три іфки туди, буде виглядати як _validator.ValidateAdd(item) 
+
             if (item.Name == null)
-                throw new NotFoundException();
+                throw new NotFoundException(); // це не нот фаунд
 
             item.Name = item.Name.Trim();
 
-            if (await _customListRepository.CheckIfNameExist(item.Name,userId))
+            if (await _customListRepository.CheckIfNameExist(item.Name,userId)) // кома
                 throw new ValidationException($"{item.Name} - This name is used");
 
             if (!ValidOptions.ValidOptions.ValidName(item.Name))
@@ -44,7 +47,7 @@ namespace List_Service.Services
             return itemToDb.Id;
         }
 
-        public async Task<IQueryable<ViewCustomList>> GetByUserId()
+        public async Task<IQueryable<ViewCustomList>> GetByUserId() // шо шо ?? виправляй, тобі не треба тут стільки інфи, половину методу сміття
         {
             var userId = _authService.GetUserId();
             var items = await _customListRepository.GetByUser(userId);
@@ -60,7 +63,7 @@ namespace List_Service.Services
             return await _customListRepository.Remove(ids);
         }
 
-        public async Task<int> Update(CreateCustomList item, int listId)
+        public async Task<int> Update(CreateCustomList item, int listId) // Валідатор.ВалідейтАпдейт, впринципі тут модельки не треба, можеш просто передавати нейм і ліст ід
         {
             _authService.AuthorizeUser(listId);
 
