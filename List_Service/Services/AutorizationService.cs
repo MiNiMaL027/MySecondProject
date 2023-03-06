@@ -18,7 +18,6 @@ namespace List_Service.Services
         {
             _repository = repository;
             _httpContextAccessor = httpContextAccessor;
-            //_currenUserID = Convert.ToInt32(httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
             _currenUserID = Convert.ToInt32(httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
         }
 
@@ -29,6 +28,8 @@ namespace List_Service.Services
 
         public int GetUserId()
         {
+            if (_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value == null)
+                throw new LoginException();
             return _currenUserID;
         }
 

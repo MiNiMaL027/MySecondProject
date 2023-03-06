@@ -10,7 +10,7 @@
     <br />
     <label>Default List: </label>
     <select name="DefaultListId">
-        @foreach (var list in Model._customList)
+        @foreach (var list in Model.CustomList)
         {
             <option value="@list.Id">@list.Name</option>
         }

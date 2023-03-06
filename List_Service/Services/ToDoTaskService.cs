@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using List_Dal.Interfaces;
 using List_Domain.CreateModel;
 using List_Domain.Enums;
@@ -6,6 +7,7 @@ using List_Domain.Exeptions;
 using List_Domain.Models;
 using List_Domain.ViewModel;
 using List_Service.Interfaces;
+using Microsoft.AspNetCore.Http;
 
 namespace List_Service.Services
 {
@@ -14,6 +16,8 @@ namespace List_Service.Services
         private readonly IToDoTaskRepository _todoTaskRepository;
         private readonly IMapper _mapper;
         private readonly IAutorizationService<ToDoTask> _authService;
+
+        public DefaultHttpContext HttpContext { get; set; }
 
         public ToDoTaskService(IToDoTaskRepository toDoTaskRepository, IMapper mapper, IAutorizationService<ToDoTask> authService)
         {
@@ -26,16 +30,10 @@ namespace List_Service.Services
         {
             var userId = _authService.GetUserId();
 
-            if (item.Title == null)
-                throw new NotFoundException();
-
-            item.Title = item.Title.Trim();
+            ValidOptions.ValidOptions.ValidNameCreateModel(item.Title);
 
             if (await _todoTaskRepository.CheckIfNameExist(item.Title, userId))
                 throw new ValidationException($"{item.Title} - This name is used");
-
-            if (!ValidOptions.ValidOptions.ValidName(item.Title))
-                throw new ValidationException($"{item.Title} - Not valide");
 
             var itemToDb = _mapper.Map<ToDoTask>(item);
             itemToDb.UserId = userId;
@@ -57,6 +55,7 @@ namespace List_Service.Services
         {
             if (listName == null)
                 throw new NotFoundException();
+
             listName = listName.Trim();
 
             var items = await _todoTaskRepository.GetByListName(listName, _authService.GetUserId());
@@ -72,7 +71,7 @@ namespace List_Service.Services
             var userId = _authService.GetUserId();
             var items = await _todoTaskRepository.GetByUser(userId);
 
-            return items.ToList().Select(x => _mapper.Map<ViewToDoTask>(x)).AsQueryable();
+            return items.ProjectTo<ViewToDoTask>(_mapper.ConfigurationProvider);
         }
 
         public async Task<IQueryable<ViewToDoTask>> GetByBaseList(int baseListId)
@@ -87,28 +86,32 @@ namespace List_Service.Services
                     if (dueDateTask.ToList().Count == 0)
                         throw new NotFoundException();
 
-                    return dueDateTask.ToList().Select(x => _mapper.Map<ViewToDoTask>(x)).AsQueryable();
+                    return dueDateTask.ProjectTo<ViewToDoTask>(_mapper.ConfigurationProvider);
+
                 case 2:
-                    var AllTask = list.ToList().Select(x => _mapper.Map<ViewToDoTask>(x)).AsQueryable();
+                    var AllTask = list.ProjectTo<ViewToDoTask>(_mapper.ConfigurationProvider);
 
                     if (AllTask.ToList().Count == 0)
                         throw new NotFoundException();
 
                     return AllTask;
+
                 case 3:
                     var importantTask = list.Where(x => x.Importance > Importance.Low);
 
                     if (importantTask.ToList().Count == 0)
                         throw new NotFoundException();
 
-                    return importantTask.ToList().Select(x => _mapper.Map<ViewToDoTask>(x)).AsQueryable();
+                    return importantTask.ProjectTo<ViewToDoTask>(_mapper.ConfigurationProvider);
+
                 case 4:
                     var plannedTask = list.Where(x => x.DueToDate != null);
 
                     if(plannedTask.ToList().Count == 0)
                         throw new NotFoundException();
 
-                    return plannedTask.ToList().Select(x => _mapper.Map<ViewToDoTask>(x)).AsQueryable();
+                    return plannedTask.ProjectTo<ViewToDoTask>(_mapper.ConfigurationProvider);
+
                 default: throw new NotFoundException();
             }
         }
@@ -125,17 +128,12 @@ namespace List_Service.Services
         {
             _authService.AuthorizeUser(taskId);
 
-            if (item.Title == null)
-                throw new NotFoundException();
+            ValidOptions.ValidOptions.ValidNameCreateModel(item.Title);
 
             var userId = _authService.GetUserId();
-            item.Title = item.Title.Trim();
 
             if (await _todoTaskRepository.CheckIfNameExist(item.Title, userId))
                 throw new ValidationException($"{item.Title} - This name is used");
-
-            if (!ValidOptions.ValidOptions.ValidName(item.Title))
-                throw new ValidationException($"{item.Title} - Not valide");
 
             var itemToDb = _mapper.Map<ToDoTask>(item);
             itemToDb.Id = taskId;

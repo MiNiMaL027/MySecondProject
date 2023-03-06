@@ -77,7 +77,7 @@
         @Html.Partial("Forms/_FormAddList")
     </div>
 
-    @if(Model._customLists != null)
+    @if(Model.CustomLists != null)
         {
         <button class="btn btn-outline-primary" name="delete-form" id="show-form-button" onclick="buttonDeleteListClick(this)">-</button>
         <div id="formDeleteList" style="display: none">
@@ -89,7 +89,7 @@
         </div>
         <hr />
         <form action="/Home/BaseList" method="get">
-            <h2 for="List">Виберіть Список:</h2>
+            <h2 for="List">Choose the list:</h2>
             <div style="margin-right: 150px">
                 <div style="display: flex; flex-direction: row-reverse; align-items: center; gap: 10px;">
                     <input class="form-check-input" name="baseListId" type="radio" value="1" />
@@ -114,10 +114,10 @@
             </div>
         </form>
             <hr />
-            <h2>Ваші Списки:</h2>
+            <h2>Your Lists:</h2>
         <form action="/Home/CustomList" method="get">
            <p>              
-                @foreach (var list in Model._customLists)
+                @foreach (var list in Model.CustomLists)
                 {
                     <br />
                     <label>
@@ -138,7 +138,7 @@
         @if (ViewBag.listName != null)
         {
             <h1>@ViewBag.listName</h1>
-            @if (Model._toDoTasks == null)
+            @if (Model.ToDoTasks == null)
             {
                 <button class="btn btn-outline-primary" name="add-form" id="show-form-button" onclick="buttonAddTaskClick(this)">+</button>
                 <div id="formAddTask" style="display: none">
@@ -146,7 +146,7 @@
                 </div>
                 <hr />
                 <div>
-                    <label> Список пустий </label>
+                    <label> List empty </label>
                 </div>
                
             }
@@ -169,7 +169,7 @@
                     </div>
                     <hr />
                     <ul>
-                        @foreach (var item in Model._toDoTasks)
+                        @foreach (var item in Model.ToDoTasks)
                         {
                             <li>
                                 <div>                                  
@@ -192,17 +192,17 @@
         }
         else if(ViewBag.baseListId != null)
         {
-            @if (Model._toDoTasks == null)
+            @if (Model.ToDoTasks == null)
             {
                 <div>
-                    <label> Список пустий </label>
+                    <label> list empty </label>
                 </div>
             }
             else
             {
                 <div>
                     <ul>
-                        @foreach (var item in Model._toDoTasks)
+                        @foreach (var item in Model.ToDoTasks)
                         {
                             <li>
                                 <div>

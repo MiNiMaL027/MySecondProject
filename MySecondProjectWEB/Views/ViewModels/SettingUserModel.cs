@@ -5,7 +5,7 @@ namespace MySecondProjectWEB.Views.ViewHelpsModel
 {
     public class SettingUserModel : PageModel
     {
-        public IQueryable<ViewCustomList> _customList { get; set; }
+        public IQueryable<ViewCustomList> CustomList { get; set; }
 
         public ViewSettings Settings { get; set; }
 

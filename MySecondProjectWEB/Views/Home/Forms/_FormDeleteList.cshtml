@@ -2,14 +2,14 @@
 @using List_Domain.Exeptions;
 @model ContentStorageModel;
 
-<h2>Видалення списку</h2>
+<h2>Deleting a list</h2>
 
 <form method="post" id="my-form" action="/Home/DeleteList">
 
-    <label for="name">Список:</label>
+    <label for="name">List:</label>
     <select class="form-select" aria-label="Default select example" name="listId">
 
-        @foreach(var list in Model._customLists)
+        @foreach(var list in Model.CustomLists)
         {
             <option value="@list.Id">@list.Name</option>
         }
@@ -17,7 +17,7 @@
     </select>
     <br />
     <p>
-        <input class="btn btn-light" type="submit" value="Видалити" />
+        <input class="btn btn-light" type="submit" value="Delete" />
     </p>
     <br />
 

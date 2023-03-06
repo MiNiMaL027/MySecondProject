@@ -25,7 +25,7 @@ namespace MySecondProjectWEB.Controllers
         [HttpGet]
         public async Task<IActionResult> HomePage()
         {
-            var model = new ContentStorageModel() { _customLists = await _customListService.GetByUserId() };
+            var model = new ContentStorageModel() { CustomLists = await _customListService.GetByUserId() };
 
             ViewBag.NotFound = false;
 
@@ -42,7 +42,12 @@ namespace MySecondProjectWEB.Controllers
                 ViewBag.baseListId = null;
                 ViewBag.listName = listName;
 
-                var model = new ContentStorageModel() { _toDoTasks = await _toDoTaskService.GetByListName(listName), _customLists = await _customListService.GetByUserId()};
+                var model = new ContentStorageModel() 
+                { 
+                    ToDoTasks = await _toDoTaskService.GetByListName(listName),
+                    CustomLists = await _customListService.GetByUserId()
+                };
+
 
                 return View("HomePage", model);
             }
@@ -50,7 +55,7 @@ namespace MySecondProjectWEB.Controllers
             {
                 ViewBag.NotFound = true;
 
-                var model = new ContentStorageModel() { _customLists = await _customListService.GetByUserId() };
+                var model = new ContentStorageModel() { CustomLists = await _customListService.GetByUserId() };
 
                 return View("HomePage", model);
             }
@@ -66,7 +71,11 @@ namespace MySecondProjectWEB.Controllers
                 ViewBag.listName = null;
                 ViewBag.baseListId = baseListId;
 
-                var model = new ContentStorageModel() { _toDoTasks = await _toDoTaskService.GetByBaseList(baseListId), _customLists = await _customListService.GetByUserId() };
+                var model = new ContentStorageModel() 
+                { 
+                    ToDoTasks = await _toDoTaskService.GetByBaseList(baseListId), 
+                    CustomLists = await _customListService.GetByUserId() 
+                };
 
                 return View("HomePage", model);
             }
@@ -74,7 +83,10 @@ namespace MySecondProjectWEB.Controllers
             {
                 ViewBag.NotFound = true;
 
-                var model = new ContentStorageModel() { _customLists = await _customListService.GetByUserId() };
+                var model = new ContentStorageModel()
+                { 
+                    CustomLists = await _customListService.GetByUserId()
+                };
 
                 return View("HomePage", model);
             }
@@ -84,7 +96,10 @@ namespace MySecondProjectWEB.Controllers
         {
             await _customListService.Add(list);
 
-            var model = new ContentStorageModel() { _customLists = await _customListService.GetByUserId() };
+            var model = new ContentStorageModel()
+            { 
+                CustomLists = await _customListService.GetByUserId()
+            };
 
             return View("HomePage", model);
 
@@ -97,7 +112,10 @@ namespace MySecondProjectWEB.Controllers
 
             await _customListService.Remove(lists);
 
-            var model = new ContentStorageModel() { _customLists = await _customListService.GetByUserId() };
+            var model = new ContentStorageModel()
+            {
+                CustomLists = await _customListService.GetByUserId()
+            };
 
             return View("HomePage", model);
         }
@@ -107,7 +125,10 @@ namespace MySecondProjectWEB.Controllers
         {
             await _customListService.Update(list, listId);
 
-            var model = new ContentStorageModel() { _customLists = await _customListService.GetByUserId() };
+            var model = new ContentStorageModel() 
+            { 
+                CustomLists = await _customListService.GetByUserId() 
+            };
 
             return View("HomePage", model);
         }
@@ -115,8 +136,7 @@ namespace MySecondProjectWEB.Controllers
         [HttpPost]
         public async Task<IActionResult> AddTask(CreateToDoTask task, string listName)
         {
-            var lists = await _customListService.GetByUserId();
-            var list = lists.FirstOrDefault(x => x.Name == listName);
+            var list = _customListService.GetByUserId().GetAwaiter().GetResult().FirstOrDefault(x => x.Name == listName);
 
             task.CustomListId = list.Id;
             
@@ -131,9 +151,10 @@ namespace MySecondProjectWEB.Controllers
             var tasks = await _toDoTaskService.GetByUserId();
             var task = tasks.FirstOrDefault(t => t.Id == taskId);
 
-            var currentList = _customListService.GetByUserId().GetAwaiter().GetResult().FirstOrDefault(l => l.Id == task.CustomListId);
+            var currentList = _customListService.GetByUserId().GetAwaiter().
+                GetResult().FirstOrDefault(l => l.Id == task.CustomListId);
 
-            List<int> currenttask = new List<int> { taskId };
+            var currenttask = new List<int> { taskId };
 
             await _toDoTaskService.Remove(currenttask);
 
@@ -150,7 +171,11 @@ namespace MySecondProjectWEB.Controllers
 
             await _toDoTaskService.Update(task, taskId);
 
-            var model = new ContentStorageModel() { _customLists = await _customListService.GetByUserId(), _toDoTasks = await _toDoTaskService.GetByListName(listName) };
+            var model = new ContentStorageModel()
+            { 
+                CustomLists = await _customListService.GetByUserId(),
+                ToDoTasks = await _toDoTaskService.GetByListName(listName) 
+            };
 
             return RedirectToAction("CustomList", new { listName = listName });
         }
