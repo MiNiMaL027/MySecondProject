@@ -1,7 +1,5 @@
 ﻿using AutoMapper;
 using List_Dal.Interfaces;
-using List_Domain.CreateModel;
-using List_Domain.Enums;
 using List_Domain.Models;
 using List_Domain.ViewModel;
 using List_Service.Interfaces;

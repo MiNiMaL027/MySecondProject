@@ -6,7 +6,6 @@ using List_Domain.ViewModel;
 using List_Service.Interfaces;
 using List_Service.Mapper;
 using List_Service.Services;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Moq;
 using System.Security.Claims;
@@ -167,15 +166,16 @@ namespace List_Service_Test.ServiceTest
             };
             var updateModel = new CreateCustomList
             {
-                Name = "Updated List"
+                Name = "Test List"
             };
             var expectedId = 1;
-            var expectedName = "Updated List";
+            var expectedName = "Test List";
 
             _mockAuthService.Setup(m => m.GetUserId()).Returns(customList.UserId);
             _mockRepository.Setup(m => m.GetById(customList.Id)).ReturnsAsync(customList);
             _mockRepository.Setup(m => m.CheckIfNameExist(updateModel.Name, customList.UserId)).ReturnsAsync(false);
             _mockRepository.Setup(m => m.Update(It.IsAny<CustomList>())).ReturnsAsync(true);
+            _mockMapper.Setup(x => x.Map<CustomList>(updateModel)).Returns(new CustomList { Name = updateModel.Name });
 
             // Act     
             var result = await _service.Update(updateModel, customList.Id);
