@@ -5,8 +5,8 @@ namespace MySecondProjectWEB.Views.ViewHelpsModel
 {
     public class ContentStorageModel : PageModel
     {
-        public IQueryable<ViewCustomList> _customLists;
+        public IQueryable<ViewCustomList> CustomLists;
 
-        public IQueryable<ViewToDoTask> _toDoTasks;
+        public IQueryable<ViewToDoTask> ToDoTasks;
     }
 }

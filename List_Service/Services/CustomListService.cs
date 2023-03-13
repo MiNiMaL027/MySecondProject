@@ -1,11 +1,13 @@
 ﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using List_Dal.Interfaces;
 using List_Domain.CreateModel;
 using List_Domain.Exeptions;
 using List_Domain.Models;
 using List_Domain.ViewModel;
 using List_Service.Interfaces;
-using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 
 namespace List_Service.Services
 {
@@ -22,19 +24,16 @@ namespace List_Service.Services
             _authService = authService;
         }
 
+        public DefaultHttpContext HttpContext { get; set; }
+
         public async Task<int> Add(CreateCustomList item)
         {
             var userId = _authService.GetUserId();
-            if (item.Name == null)
-                throw new NotFoundException();
 
-            item.Name = item.Name.Trim();
+            ValidOptions.ValidOptions.ValidNameCreateModel(item.Name);
 
-            if (await _customListRepository.CheckIfNameExist(item.Name,userId))
+            if (await _customListRepository.CheckIfNameExist(item.Name, userId))
                 throw new ValidationException($"{item.Name} - This name is used");
-
-            if (!ValidOptions.ValidOptions.ValidName(item.Name))
-                throw new ValidationException($"{item.Name} - Not valide");
 
             var itemToDb = _mapper.Map<CustomList>(item);
             itemToDb.UserId = userId;
@@ -49,7 +48,12 @@ namespace List_Service.Services
             var userId = _authService.GetUserId();
             var items = await _customListRepository.GetByUser(userId);
 
-            return items.ToList().Select(x => _mapper.Map<ViewCustomList>(x)).AsQueryable();
+            if (items == null)
+                throw new NotFoundException();
+      
+            return items.ProjectTo<ViewCustomList>(_mapper.ConfigurationProvider);
+
+            //return items.ToList().Select(x => _mapper.Map<ViewCustomList>(x)).AsQueryable();
         }
 
         public async Task<List<int>> Remove(List<int> ids)
@@ -65,13 +69,11 @@ namespace List_Service.Services
             _authService.AuthorizeUser(listId);
 
             var userId = _authService.GetUserId();
-            item.Name = item.Name.Trim();
+
+            ValidOptions.ValidOptions.ValidNameCreateModel(item.Name);
 
             if (await _customListRepository.CheckIfNameExist(item.Name, userId))
-                throw new ValidationException($"{item.Name} - This name is used");
-
-            if (!ValidOptions.ValidOptions.ValidName(item.Name))
-                throw new ValidationException($"{item.Name} - Not valide");
+                throw new ValidationException($"{item.Name} - This name is used");   
 
             var itemToDb = _mapper.Map<CustomList>(item);
             itemToDb.Id = listId;

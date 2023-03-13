@@ -35,13 +35,13 @@ namespace MySecondProjectWEB.Controllers
             }
             catch(LoginException)
             {
-                ViewBag.ErrorMessage = "Користувача не знайдено";
+                ViewBag.ErrorMessage = "User not found";
                 return View(loginModel);
             }          
         }
 
         [HttpGet]
-        public IActionResult Register() { return View(); }
+        public IActionResult Register() => View();
 
         [HttpPost]
         public async Task<IActionResult> Register(RegisterModel registerModel)

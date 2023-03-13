@@ -7,9 +7,13 @@ using List_Domain.ViewModel;
 namespace List_Service.Mapper
 {
     public class AppMappingProfile : Profile
-    {
+    {   
         public AppMappingProfile()
         {
+            CreateProjection<CustomList, ViewCustomList>();
+
+            CreateProjection<ToDoTask, ViewToDoTask>();
+
             CreateMap<CreateCustomList, CustomList>().ReverseMap();
 
             CreateMap<CustomList, ViewCustomList>().ReverseMap();

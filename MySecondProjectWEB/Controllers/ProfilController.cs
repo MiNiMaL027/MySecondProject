@@ -23,13 +23,22 @@ namespace MySecondProjectWEB.Controllers
         {
             try
             {
-                var model = new SettingUserModel() { UserName = HttpContext.User.Identity.Name, Settings = await _settingsService.GetSettingsByUser(), _customList = await _customListService.GetByUserId()};
+                var model = new SettingUserModel()
+                {
+                    UserName = HttpContext.User.Identity?.Name ?? "Name not found", 
+                    Settings = await _settingsService.GetSettingsByUser(),
+                    CustomList = await _customListService.GetByUserId()
+                };
 
                 return View(model);
             }
             catch (NotFoundException)
             {
-                return View(new SettingUserModel() { UserName = HttpContext.User.Identity.Name, _customList = await _customListService.GetByUserId() }); 
+                return View(new SettingUserModel() 
+                {
+                    UserName = HttpContext.User.Identity.Name,
+                    CustomList = await _customListService.GetByUserId() }
+                ); 
             }
         }
 

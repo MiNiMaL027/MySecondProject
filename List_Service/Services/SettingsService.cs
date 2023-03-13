@@ -4,6 +4,7 @@ using List_Domain.Exeptions;
 using List_Domain.Models;
 using List_Domain.ViewModel;
 using List_Service.Interfaces;
+using Microsoft.AspNetCore.Http;
 
 namespace List_Service.Services
 {
@@ -20,12 +21,14 @@ namespace List_Service.Services
             _mapper = mapper;
         }
 
+        public DefaultHttpContext HttpContext { get; set; }
+
         public async Task<int> CreateSettings(ViewSettings settings)
         {
             var item = await _repository.GetSettingsByUser(_authService.GetUserId());
 
             if (item != null)
-                throw new ValidationException();
+                throw new AlreadyExistException();
 
              var itemToDb = _mapper.Map<Settings>(settings);
             itemToDb.UserId = _authService.GetUserId();

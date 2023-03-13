@@ -2,7 +2,7 @@
 
 namespace List_Dal.Interfaces
 {
-    public interface IToDoTaskRepository : IDefaultRepository<ToDoTask>
+    public interface IToDoTaskRepository : IDefaultRepository<ToDoTask>, IChekAuthorization<ToDoTask>
     {
         Task<bool> CheckIfNameExist(string title, int uresId);
 

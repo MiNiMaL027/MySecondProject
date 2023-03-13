@@ -3,13 +3,13 @@
 @using List_Domain.Enums;
 @model ContentStorageModel;
 
-<h2>Створення Завдання</h2>
+<h2>Creating a task</h2>
 
 <form id="my-form" method="post" action="/Home/AddTask">
-    <label for="ListName">Список:</label>
+    <label for="ListName">List:</label>
     <select class="form-select" aria-label="Default select example" name="listName">
 
-        @foreach (var list in Model._customLists)
+        @foreach (var list in Model.CustomLists)
         {
             @if(@list.Name == ViewBag.listName)
             {
@@ -22,17 +22,17 @@
         }
     </select>
     <br />
-    <label for="name">Назва Завдання:</label>
+    <label for="name">Task name:</label>
     <input class="form-control" placeholder="Name" type="text" id="name" name="Title"><br>
-    <label for="name">Опис Завдання:</label>
+    <label for="name">Description:</label>
     <input class="form-control" placeholder="Description" type="text" id="desc" name="Description"><br>
-    <label for="name">Важливість:</label><br />
+    <label for="name">Importance:</label><br />
     <select class="form-select" aria-label="Default select example" name="Importance">
-        <option value="@Importance.Low">Низька</option>
-        <option value="@Importance.Normal">Нормальна</option>
-        <option value="@Importance.High">Висока</option>
+        <option value="@Importance.Low">Low</option>
+        <option selected="selected" value="@Importance.Normal">Normal</option>
+        <option value="@Importance.High">High</option>
     </select>
     <input name="IsFavorite" type="checkbox" value="true" />
     <span>Favorite</span><br />
-    <input class="btn btn-light" type="submit" value="Створити">
+    <input class="btn btn-light" type="submit" value="Create">
 </form>
