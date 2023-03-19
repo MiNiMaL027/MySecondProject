@@ -8,7 +8,11 @@ namespace List_Service.Interfaces
 
         Task<IQueryable<RequestType>> GetByUserId();
 
+        Task<IQueryable<RequestType>> GetAll();
+
         Task<List<int>> Remove(List<int> ids);
+
+        Task<bool> RemoveFromDb(List<int> ids);
 
         Task<int> Update(ResponseType item, int itemId);
     }

@@ -21,12 +21,14 @@ namespace List_Service.Services
             _mapper = mapper;
         }
 
+        public DefaultHttpContext HttpContext { get; set; }
+
         public async Task<int> CreateSettings(ViewSettings settings)
         {
             var item = await _repository.GetSettingsByUser(_authService.GetUserId());
 
             if (item != null)
-                throw new ValidationException();
+                throw new AlreadyExistException();
 
              var itemToDb = _mapper.Map<Settings>(settings);
             itemToDb.UserId = _authService.GetUserId();
@@ -40,6 +42,9 @@ namespace List_Service.Services
         {
             var userId = _authService.GetUserId();
             var item = await _repository.GetSettingsByUser(userId);
+
+            if(item == null)
+                throw new NotFoundException();
 
             return _mapper.Map<ViewSettings>(item);
         }

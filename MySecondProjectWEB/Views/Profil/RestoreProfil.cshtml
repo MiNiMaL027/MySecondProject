@@ -1,0 +1,15 @@
+﻿@{
+    ViewData["Title"] = "Restore";
+    Layout = "~/Views/Shared/_LoginLayout.cshtml";
+}
+
+<h1>Restore Profil</h1>
+
+<div>
+    <form method="post" action="/Profil/RestoreProfil">
+        <label>Write the email of the account you want to restore:</label><br />
+        <input type="text" name="email"/><br /><br />
+
+        <input class="btn btn-light" type="submit" value="Restore" />
+    </form>
+</div>

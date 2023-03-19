@@ -1,0 +1,19 @@
+﻿@using MySecondProjectWEB.Views.ViewHelpsModel;
+@model SettingUserModel;
+
+<form method="post" action="/Profil/CreateSettings">
+    <label>AllowNotification: </label>
+    <input id="AllowNotification" name="AllowNotification" type="radio" value="false" />
+    <span>Disable</span>
+    <input id="AllowNotification" name="AllowNotification" type="radio" value="true" />
+    <span>Enable</span>
+    <br />
+    <label>Default List: </label>
+    <select name="DefaultListId">
+        @foreach(var list in Model.CustomList)
+        {
+            <option value="@list.Id">@list.Name</option>
+        }
+    </select>
+    <input type="submit" value="Save"/><br />
+</form>

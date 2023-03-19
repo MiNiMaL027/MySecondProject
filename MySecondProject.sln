@@ -11,7 +11,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "List_Service", "List_Servic
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "List_Dal", "List_Dal\List_Dal.csproj", "{C36B901C-1305-4722-97CC-9D29FA88D374}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataBaseSeeder", "DataBaseSeeder\DataBaseSeeder.csproj", "{86A64EC5-57B9-453C-A9C5-60E4B02847D1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataBaseSeeder", "DataBaseSeeder\DataBaseSeeder.csproj", "{86A64EC5-57B9-453C-A9C5-60E4B02847D1}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MySecondProjectWEB", "MySecondProjectWEB\MySecondProjectWEB.csproj", "{1A5EEDDC-ABC3-4A34-BDA2-5B9DF03E604F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "List_Service_Test", "List_Service_Test\List_Service_Test.csproj", "{E6FDFE36-3B99-4D0F-A81B-4B1A88998B88}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +43,14 @@ Global
 		{86A64EC5-57B9-453C-A9C5-60E4B02847D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{86A64EC5-57B9-453C-A9C5-60E4B02847D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{86A64EC5-57B9-453C-A9C5-60E4B02847D1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1A5EEDDC-ABC3-4A34-BDA2-5B9DF03E604F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1A5EEDDC-ABC3-4A34-BDA2-5B9DF03E604F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1A5EEDDC-ABC3-4A34-BDA2-5B9DF03E604F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1A5EEDDC-ABC3-4A34-BDA2-5B9DF03E604F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E6FDFE36-3B99-4D0F-A81B-4B1A88998B88}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E6FDFE36-3B99-4D0F-A81B-4B1A88998B88}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E6FDFE36-3B99-4D0F-A81B-4B1A88998B88}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E6FDFE36-3B99-4D0F-A81B-4B1A88998B88}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

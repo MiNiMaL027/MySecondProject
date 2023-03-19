@@ -6,7 +6,7 @@
 
         public string Name { get; set; }
 
-        public bool IsDeleted { get; set; }
+        public DateTime? ArchivalDate { get; set; }
 
         public int UserId { get; set; }
     }
