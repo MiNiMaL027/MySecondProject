@@ -1,0 +1,25 @@
+﻿@using MySecondProjectWEB.Views.ViewHelpsModel;
+@using List_Domain.Exeptions;
+@model ContentStorageModel;
+
+<h2>Deleting a list</h2>
+
+<form method="post" id="my-form" action="/Home/DeleteList">
+
+    <label for="name">List:</label>
+    <select class="form-select" aria-label="Default select example" name="listId">
+
+        @foreach(var list in Model.CustomLists)
+        {
+            <option value="@list.Id">@list.Name</option>
+        }
+
+    </select>
+    <br />
+    <p>
+        <input class="btn btn-light" type="submit" value="Delete" />
+    </p>
+    <br />
+
+</form>
+

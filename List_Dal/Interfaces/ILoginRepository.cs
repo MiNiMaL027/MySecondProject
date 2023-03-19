@@ -21,6 +21,10 @@ namespace List_Dal.Interfaces
 
         Task<int> AddUser(User user);
 
+        Task<bool> Remove(int id);
+
+        Task<bool> RemoveFromDb(List<int> ids);
+
         Task RemoveFewCode(List<EmailConfirmationCode> Codes);
     }
 }

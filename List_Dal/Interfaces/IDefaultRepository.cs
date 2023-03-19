@@ -6,8 +6,12 @@
 
         Task<IQueryable<T>> GetByUser(int userId);
 
+        Task<IQueryable<T>> GetAll();
+
         Task<List<int>> Remove(List<int> ids);
 
         Task<bool> Update(T item);
+
+        Task<bool> RemoveFromDb(List<int> ids);
     }
 }

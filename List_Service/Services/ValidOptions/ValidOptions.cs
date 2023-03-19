@@ -1,4 +1,6 @@
-﻿namespace List_Service.Services.ValidOptions
+﻿using List_Domain.Exeptions;
+
+namespace List_Service.Services.ValidOptions
 {
     public class ValidOptions
     {
@@ -7,9 +9,29 @@
         /// </summary>
         /// <param name="name"></param>
         /// <returns>True or False</returns>
-        public static bool ValidName(string name)
+        private static bool ValidName(string name)
         {
             if (name.Length <= 3 && name.Length >= 20)
+                return false;
+            return true;
+        }
+
+        public static string ValidNameCreateModel(string Name)
+        {
+            if (Name == null)
+                throw new ValidationException("Null reference");
+
+            Name = Name.Trim();
+
+            if (!ValidName(Name))
+                throw new ValidationException($"{Name} - Not valide");
+
+            return Name;       
+        }
+
+        public static bool ValidDueDate(DateTime? dateTime)
+        {
+            if (dateTime < DateTime.Now.AddHours(1))
                 return false;
             return true;
         }

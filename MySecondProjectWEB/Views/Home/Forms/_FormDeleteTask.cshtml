@@ -1,0 +1,22 @@
+﻿@using MySecondProjectWEB.Views.ViewHelpsModel;
+@using List_Domain.Exeptions;
+@model ContentStorageModel;
+
+<h2>Deleting a task</h2>
+
+<form method="post" id="my-form" action="/Home/DeleteTask">
+
+    <label for="name">List:</label>
+    <select class="form-select" aria-label="Default select example" name="taskId">
+
+        @foreach (var task in Model.ToDoTasks)
+        {
+            <option value="@task.Id">@task.Title</option>
+        }
+    </select>
+    <br />
+    <p>
+        <input class="btn btn-light" type="submit" value="Delete" />
+    </p>
+
+</form>

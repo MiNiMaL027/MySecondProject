@@ -20,7 +20,7 @@ namespace List_Domain.ViewModel
 
         public bool IsFavorite { get; set; }
 
-        public bool IsDeleted { get; set; }
+        public DateTime? ArchivalDate { get; set; }
 
         public int? CustomListId { get; set; }
 

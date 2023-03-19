@@ -1,17 +1,18 @@
+using Hangfire;
+using Hangfire.SqlServer;
 using List_Dal;
 using List_Dal.Interfaces;
 using List_Dal.Repositories;
-using List_Service.Mapper;
+using List_Domain.Models;
+using List_Service.BackgroundTasks;
+using List_Service.Filters;
 using List_Service.Interfaces;
+using List_Service.Mapper;
 using List_Service.Services;
 using List_Service.Services.ValidOptions;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.OData;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
-using MySecondProject.Filters;
-using List_Domain.Models;
 
 namespace MySecondProject
 {
@@ -30,6 +31,8 @@ namespace MySecondProject
 
             builder.Services.AddEndpointsApiExplorer();
 
+            builder.Services.AddHttpContextAccessor();
+
             builder.Services.AddScoped<IToDoTaskRepository, ToDoTaskRepository>();
             builder.Services.AddScoped<ICustomListRepository, CustomListRepository>();
             builder.Services.AddScoped<ISettingsRepository, SettingsRepository>();
@@ -37,6 +40,8 @@ namespace MySecondProject
             builder.Services.AddScoped<ICustomListService, CustomListService>();
             builder.Services.AddScoped<IToDoTaskService, ToDoTaskService>();
             builder.Services.AddScoped<ISettingsService, SettingsService>();
+            builder.Services.AddScoped<IUserService, UserService>();             
+            builder.Services.AddScoped<ISendEmailService, SendEmailService>();             
 
             builder.Services.AddScoped<IChekAuthorization<ToDoTask>, ToDoTaskRepository>();
             builder.Services.AddScoped<IChekAuthorization<CustomList>, CustomListRepository>();
@@ -48,55 +53,91 @@ namespace MySecondProject
 
             builder.Services.AddSingleton<ValidOptions>();
 
-            builder.Services.AddHttpContextAccessor();
-
-            builder.Services.AddSwaggerGen(options =>
+                builder.Services.AddSwaggerGen(options =>
             {
-                options.AddSecurityDefinition("JWT Bearer", new OpenApiSecurityScheme
-                {
-                    Description = "This is a JWT bearer authentication scheme",
-                    In = ParameterLocation.Header,
-                    Scheme = "Bearer",
-                    Type = Microsoft.OpenApi.Models.SecuritySchemeType.Http
-                });
+                //options.AddSecurityDefinition("JWT Bearer", new OpenApiSecurityScheme
+                //{
+                //    Description = "This is a JWT bearer authentication scheme",
+                //    In = ParameterLocation.Header,
+                //    Scheme = "Bearer",
+                //    Type = SecuritySchemeType.Http
+                //});
 
-                options.AddSecurityRequirement(new OpenApiSecurityRequirement
-                {
-                    {
-                        new OpenApiSecurityScheme{
-                            Reference = new OpenApiReference{
-                                Id = "JWT Bearer",
-                                Type = ReferenceType.SecurityScheme
-                            }
-                        }, new List<string>()
-                    }
-                });
+                //options.AddSecurityRequirement(new OpenApiSecurityRequirement
+                //{
+                //    {
+                //        new OpenApiSecurityScheme{
+                //            Reference = new OpenApiReference{
+                //                Id = "JWT Bearer",
+                //                Type = ReferenceType.SecurityScheme
+                //            }
+                //        }, new List<string>()
+                //    }
+                //});
                 options.OperationFilter<AddODataQueryOptionParametersOperationFilter>();
             });
 
-            builder.Services.AddScoped<ILoginRepository, LoginRepository>();
-            builder.Services.AddScoped<ILoginService, LoginService>();
-
-            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
-            {
-                options.TokenValidationParameters = new TokenValidationParameters
-                   {
-                       ValidateIssuer = true,
-                       ValidIssuer = AuthOptions.ISSUER,
-                       ValidateAudience = true,
-                       ValidAudience = AuthOptions.AUDIENCE,
-                       ValidateLifetime = true,
-                       IssuerSigningKey = AuthOptions.GetSymmetricSecurityKey(),
-                       ValidateIssuerSigningKey = true,
-                   };
-            });
+            builder.Services.AddScoped<ILoginService, LoginService>();        
             
             var connection = builder.Configuration.GetConnectionString("DefaultConnection");
 
-            builder.Services.AddDbContext<ApplicationContext>(options => 
+            builder.Services.AddDbContext<ApplicationContext>(options =>
                 options.UseSqlServer(connection, b =>
                 b.MigrationsAssembly("List_Dal")),
                 ServiceLifetime.Transient);
+
+            builder.Services.AddHangfire(hangfire =>                                       
+            {
+                hangfire.SetDataCompatibilityLevel(CompatibilityLevel.Version_170);
+                hangfire.UseSimpleAssemblyNameTypeSerializer();
+                hangfire.UseRecommendedSerializerSettings();
+                hangfire.UseColouredConsoleLogProvider();
+                hangfire.UseSqlServerStorage(
+                    connection,
+                    new SqlServerStorageOptions
+                    {
+                        CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
+                        SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
+                        QueuePollInterval = TimeSpan.Zero,
+                        UseRecommendedIsolationLevel = true,
+                        DisableGlobalLocks = true
+                    });
+
+                var server = new BackgroundJobServer(new BackgroundJobServerOptions
+                {
+                    ServerName = "hangfire",
+                });
+
+                RecurringJob.AddOrUpdate<TaskRetentionPoleBackgroundTask>(x => x.Run(), Cron.Daily);
+                RecurringJob.AddOrUpdate<ListRetentionPoleBackgroundTask>(x => x.Run(), Cron.Daily);
+                RecurringJob.AddOrUpdate<UserRetentionPoleBackgroundTask>(x => x.Run(), Cron.Daily);
+            });
+          
+            builder.Services.AddIdentity<User,IdentityRole<int>>(options => options.SignIn.RequireConfirmedAccount = true)
+            .AddEntityFrameworkStores<ApplicationContext>();
+
+            builder.Services.Configure<IdentityOptions>(options =>
+            {
+                options.Password.RequireDigit = false;
+                options.Password.RequireLowercase = false;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequiredLength = 3;
+                options.Password.RequiredUniqueChars = 1;
+
+                options.User.AllowedUserNameCharacters =
+                "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@";
+                options.User.RequireUniqueEmail = false;
+
+                options.Lockout.AllowedForNewUsers = false;
+
+                options.SignIn.RequireConfirmedAccount = false;
+            });
+
+            builder.Services.ConfigureApplicationCookie(config =>
+            {
+
+            });
 
             var app = builder.Build();
 
@@ -112,6 +153,8 @@ namespace MySecondProject
             app.UseAuthorization();
            
             app.MapControllers();
+
+            app.UseHangfireDashboard();
 
             app.Run();
         }
