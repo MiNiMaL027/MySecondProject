@@ -43,6 +43,13 @@ namespace List_Service.Services
             return itemToDb.Id;
         }
 
+        public async Task<IQueryable<ViewCustomList>> GetAll()
+        {
+            var items = await _customListRepository.GetAll();
+
+            return items.ProjectTo<ViewCustomList>(_mapper.ConfigurationProvider);
+        }
+
         public async Task<IQueryable<ViewCustomList>> GetByUserId()
         {
             var userId = _authService.GetUserId();
@@ -62,6 +69,11 @@ namespace List_Service.Services
                 _authService.AuthorizeUser(id);
 
             return await _customListRepository.Remove(ids);
+        }
+
+        public async Task<bool> RemoveFromDb(List<int> ids)
+        {
+            return await _customListRepository.RemoveFromDb(ids);
         }
 
         public async Task<int> Update(CreateCustomList item, int listId)

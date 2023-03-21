@@ -23,6 +23,7 @@
         width: 50%;
         margin: 0 auto;
     }
+
     .setting-div{
         position: fixed;
         top: 10;
@@ -40,6 +41,18 @@
         left: 50%;
         transform: translate(-50%, -50%);
         text-align: center;
+    }
+
+    .deleteButton {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        padding: 10px 20px;
+        background-color: wheat;
+        color: red;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
     }
 </style>
 <div class="parent">
@@ -64,7 +77,7 @@
         else
         {
             <div>
-                <button style="width: 200px; height: 50px;" name="form" id="show-form-button" onclick="buttonSettingClick(this)">-</button>
+                <button style="width: 200px; height: 50px;" name="form" id="show-form-button" onclick="buttonSettingClick(this)">setting</button>
                 <div id="HideSetting" style="display: none">
                     @Html.Partial("Forms/_FormAddSettings")
                 </div>
@@ -76,7 +89,12 @@
             <label>Current list - </label>
             <label>None</label>
             <br />
-        }
+        }     
+    </div>
+    <div class="deleteButton">
+        <form  method="post" action="/Profil/DeleteProfil">
+            <input type="submit" value="DeleteProfil" />
+        </form>
     </div>
 </div>
 

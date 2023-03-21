@@ -5,7 +5,7 @@
 
 <h2>Updating the list</h2>
 
-<form id="my-form" method="post" action="/Home/AddTask">
+<form id="my-form" method="post" action="/Home/UpdateTask">
     <label>Choose Task for update:</label>
     <select class="form-select" aria-label="Default select example" name="taskId">
         @foreach(var task in Model.ToDoTasks)
@@ -34,6 +34,8 @@
     <input class="form-control" placeholder="Name" type="text" id="name" name="Title"><br>
     <label for="name">Description:</label>
     <input class="form-control" placeholder="Description" type="text" id="desc" name="Description"><br>
+    <label>DueToDate:</label>
+    <input calss="form-control "type="date" id="duedate" name="DueToDate"/><br />
     <label for="name">Importance:</label><br />
     <select class="form-select" aria-label="Default select example" name="Importance">
         <option value="@Importance.Low">Low</option>

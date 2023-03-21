@@ -136,7 +136,7 @@ namespace MySecondProjectWEB.Controllers
         [HttpPost]
         public async Task<IActionResult> AddTask(CreateToDoTask task, string listName)
         {
-            var list = _customListService.GetByUserId().GetAwaiter().GetResult().FirstOrDefault(x => x.Name == listName);
+            var list = await _customListService.GetByUserId().GetAwaiter().GetResult().FirstOrDefaultAsync(x => x.Name == listName);
 
             task.CustomListId = list.Id;
             
@@ -149,7 +149,7 @@ namespace MySecondProjectWEB.Controllers
         public async Task<IActionResult> Deletetask(int taskId)
         {
             var tasks = await _toDoTaskService.GetByUserId();
-            var task = tasks.FirstOrDefault(t => t.Id == taskId);
+            var task = await tasks.FirstOrDefaultAsync(t => t.Id == taskId);
 
             var currentList = _customListService.GetByUserId().GetAwaiter().
                 GetResult().FirstOrDefault(l => l.Id == task.CustomListId);
@@ -165,7 +165,7 @@ namespace MySecondProjectWEB.Controllers
         public async Task<IActionResult> UpdateTask(CreateToDoTask task, string listName, int taskId)
         {
             var lists = await _customListService.GetByUserId();
-            var list = lists.FirstOrDefaultAsync(x => x.Name == listName);
+            var list = await lists.FirstOrDefaultAsync(x => x.Name == listName);
 
             task.CustomListId = list.Id;
 

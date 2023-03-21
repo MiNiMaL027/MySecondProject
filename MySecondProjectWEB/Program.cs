@@ -12,6 +12,9 @@ using Microsoft.EntityFrameworkCore;
 using List_Dal;
 using List_Service.Mapper;
 using Microsoft.AspNetCore.Identity;
+using Hangfire;
+using Hangfire.SqlServer;
+using List_Service.BackgroundTasks;
 
 namespace MySecondProjectWEB
 {
@@ -29,6 +32,8 @@ namespace MySecondProjectWEB
             options.Filters.Add(typeof(NotImplExceptionFilterAttribute)))
                 .AddOData(options => options.Select().OrderBy().Filter().SkipToken().SetMaxTop(10));
 
+            builder.Services.AddHttpContextAccessor();
+
             builder.Services.AddScoped<IToDoTaskRepository, ToDoTaskRepository>();
             builder.Services.AddScoped<ICustomListRepository, CustomListRepository>();
             builder.Services.AddScoped<ISettingsRepository, SettingsRepository>();
@@ -36,6 +41,7 @@ namespace MySecondProjectWEB
             builder.Services.AddScoped<ICustomListService, CustomListService>();
             builder.Services.AddScoped<IToDoTaskService, ToDoTaskService>();
             builder.Services.AddScoped<ISettingsService, SettingsService>();
+            builder.Services.AddScoped<IUserService, UserService>();
 
             builder.Services.AddScoped<IChekAuthorization<ToDoTask>, ToDoTaskRepository>();
             builder.Services.AddScoped<IChekAuthorization<CustomList>, CustomListRepository>();
@@ -47,8 +53,6 @@ namespace MySecondProjectWEB
 
             builder.Services.AddSingleton<ValidOptions>();
 
-            builder.Services.AddHttpContextAccessor();
-
             builder.Services.AddTransient<ILoginService, LoginService>();
          
             var connection = builder.Configuration.GetConnectionString("DefaultConnection");
@@ -58,9 +62,35 @@ namespace MySecondProjectWEB
                 b.MigrationsAssembly("List_Dal")),
                 ServiceLifetime.Transient);
 
+            builder.Services.AddHangfire(hangfire =>
+            {
+                hangfire.SetDataCompatibilityLevel(CompatibilityLevel.Version_170);
+                hangfire.UseSimpleAssemblyNameTypeSerializer();
+                hangfire.UseRecommendedSerializerSettings();
+                hangfire.UseColouredConsoleLogProvider();
+                hangfire.UseSqlServerStorage(
+                    connection,
+                    new SqlServerStorageOptions
+                    {
+                        CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
+                        SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
+                        QueuePollInterval = TimeSpan.Zero,
+                        UseRecommendedIsolationLevel = true,
+                        DisableGlobalLocks = true
+                    });
+
+                var server = new BackgroundJobServer(new BackgroundJobServerOptions
+                {
+                    ServerName = "hangfire-test",
+                });
+
+                RecurringJob.AddOrUpdate<TaskRetentionPoleBackgroundTask>(x => x.Run(), Cron.Daily);
+                RecurringJob.AddOrUpdate<ListRetentionPoleBackgroundTask>(x => x.Run(), Cron.Daily);
+                RecurringJob.AddOrUpdate<UserRetentionPoleBackgroundTask>(x => x.Run(), Cron.Daily);
+            });
+
             builder.Services.AddIdentity<User, IdentityRole<int>>(options => options.SignIn.RequireConfirmedAccount = true)
           .AddEntityFrameworkStores<ApplicationContext>();
-
 
             builder.Services.Configure<IdentityOptions>(options =>
             {
@@ -103,6 +133,8 @@ namespace MySecondProjectWEB
 
             app.UseAuthentication();
             app.UseAuthorization();
+
+            app.UseHangfireDashboard();
 
             app.MapControllerRoute(
                 name: "default",

@@ -109,7 +109,7 @@
                 </div>
                 <br>
                 <p>
-                    <input class="btn btn-light name="baselist" type="submit" value="Завдання" />
+                    <input class="btn btn-light name="baselist" type="submit" value="Tasks" />
                 </p>
             </div>
         </form>
@@ -176,12 +176,12 @@
                                     <h2>@item.Title</h2><br />
                                     <label>@item.Description</label><br />
                                     <label>Importance -- @item.Importance</label><br />
-                                    <label>CreationData -- @item.CreationDate</label><br />
+                                    <label>CreationDate -- @item.CreationDate</label><br />
                                     <label>Favorite -- @item.IsFavorite</label><br />
 
                                     @if (item.DueToDate != null)
                                     {
-                                        <label>CreationData -- @item.DueToDate</label> <br />
+                                        <label>DueToDate -- @item.DueToDate.Value.ToShortDateString()</label> <br />
                                     }                                 
                                 </div>
                             </li>
@@ -214,7 +214,7 @@
 
                                     @if (item.DueToDate != null)
                                     {
-                                        <label>DueDate -- @item.DueToDate</label> <br />
+                                        <label>DueToDate -- @item.DueToDate.Value.ToShortDateString()</label> <br />
                                     }
                                 </div>
                             </li>

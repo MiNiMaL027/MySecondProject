@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.Identity;
-
-namespace List_Domain.Models
+﻿namespace List_Domain.Models
 {
-    public class User : IdentityUser<int>
+    public class User
     {
         public string? Name { get; set; }
+
+        public DateTime? ArchivalDate { get; set; }
     }
 }

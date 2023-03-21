@@ -56,6 +56,6 @@ namespace MySecondProjectWEB.Controllers
         {
             _loginService.SignOff();
             return Redirect("Login");
-        }
+        }     
     }
 }

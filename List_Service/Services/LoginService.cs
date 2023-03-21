@@ -31,15 +31,18 @@ namespace List_Service.Services
 
             if (result == null)
                 throw new LoginException();
-
-            if (result.Succeeded)
-                return true;
-
+         
             if (result.RequiresTwoFactor)
                 throw new LoginException();
 
             if (result.IsLockedOut)
                 throw new LoginException();
+
+            if (user.ArchivalDate != null)
+                throw new LoginException($"{user.Name} - Deleted");
+
+            if (result.Succeeded)
+                return true;
 
             throw new LoginException();
         }

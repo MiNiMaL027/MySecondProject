@@ -2,6 +2,7 @@
 using List_Domain.Exeptions;
 using List_Domain.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Cryptography.X509Certificates;
 
 namespace List_Dal.Repositories
 {
@@ -31,18 +32,23 @@ namespace List_Dal.Repositories
 
         public async Task<bool> CompleteTask(int id)
         {
-            var task = await dbSet.FirstOrDefaultAsync(i => !i.IsDeleted && i.Id == id);
+            var task = await dbSet.FirstOrDefaultAsync(i => i.ArchivalDate == null && i.Id == id);
             if (task == null)
                 throw new NotFoundException($"{id} - Not Found");
 
             if (!task.IsCompleted)
             {
-                task.IsDeleted = true;
+                task.ArchivalDate = DateTime.Now;
                 task.IsCompleted = true;
                 return true;
             }
 
             return false;            
+        }
+
+        public async Task<IQueryable<ToDoTask>> GetAll()
+        {
+            return dbSet;
         }
 
         public async Task<ToDoTask> GetById(int Id)
@@ -52,31 +58,45 @@ namespace List_Dal.Repositories
 
         public async Task<List<ToDoTask>> GetByListName(string listName, int userId)
         {
-            var list = await db.Set<CustomList>().FirstAsync(x => x.Name == listName && x.UserId == userId && x.IsDeleted == false);
+            var list = await db.Set<CustomList>().FirstAsync(x => x.Name == listName && x.UserId == userId && x.ArchivalDate == null);
 
             if (list == null)
                 throw new NotFoundException($"{listName} -- Not Exist");
 
-            return await dbSet.Where(t => t.CustomListId == list.Id && t.IsDeleted == false && t.UserId == userId).ToListAsync();
+            return await dbSet.Where(t => t.CustomListId == list.Id && t.ArchivalDate == null && t.UserId == userId).ToListAsync();
         }
 
         public async Task<IQueryable<ToDoTask>> GetByUser(int userId)
         {
-            return dbSet.Where(i => i.UserId == userId && !i.IsDeleted);
+            return dbSet.Where(i => i.UserId == userId && i.ArchivalDate == null);
         }
 
         public async Task<List<int>> Remove(List<int> ids)
         {
-            var items = await dbSet.Where(i => ids.Contains(i.Id) && !i.IsDeleted).ToListAsync();
+            var items = await dbSet.Where(i => ids.Contains(i.Id) && i.ArchivalDate == null).ToListAsync();
 
             if (items.Count == 0)
                 throw new NotFoundException($"{ids} - any from this id not found");
 
-            items.ForEach(x => x.IsDeleted = true);
+            items.ForEach(x => x.ArchivalDate = DateTime.Now);
 
             db.SaveChanges();
 
             return items.Select(i => i.Id).ToList();
+        }
+
+        public async Task<bool> RemoveFromDb(List<int> ids)
+        {
+            var items = await dbSet.Where(i => ids.Contains(i.Id)).ToListAsync();
+          
+            if (items.Count == 0)
+                return false;
+
+            dbSet.RemoveRange(items);
+
+            db.SaveChanges();
+
+            return true;
         }
 
         public async Task<bool> Update(ToDoTask item)
@@ -84,7 +104,7 @@ namespace List_Dal.Repositories
             if (item == null)
                 throw new NullReferenceException();
 
-            if (dbSet.Contains(item) && !item.IsDeleted && !item.IsCompleted)
+            if (dbSet.Contains(item) && item.ArchivalDate == null && !item.IsCompleted)
             {
                 dbSet.Update(item);
                 await db.SaveChangesAsync();

@@ -1,7 +1,10 @@
+using Hangfire;
+using Hangfire.SqlServer;
 using List_Dal;
 using List_Dal.Interfaces;
 using List_Dal.Repositories;
 using List_Domain.Models;
+using List_Service.BackgroundTasks;
 using List_Service.Filters;
 using List_Service.Interfaces;
 using List_Service.Mapper;
@@ -28,6 +31,8 @@ namespace MySecondProject
 
             builder.Services.AddEndpointsApiExplorer();
 
+            builder.Services.AddHttpContextAccessor();
+
             builder.Services.AddScoped<IToDoTaskRepository, ToDoTaskRepository>();
             builder.Services.AddScoped<ICustomListRepository, CustomListRepository>();
             builder.Services.AddScoped<ISettingsRepository, SettingsRepository>();
@@ -35,6 +40,8 @@ namespace MySecondProject
             builder.Services.AddScoped<ICustomListService, CustomListService>();
             builder.Services.AddScoped<IToDoTaskService, ToDoTaskService>();
             builder.Services.AddScoped<ISettingsService, SettingsService>();
+            builder.Services.AddScoped<IUserService, UserService>();             
+            builder.Services.AddScoped<ISendEmailService, SendEmailService>();             
 
             builder.Services.AddScoped<IChekAuthorization<ToDoTask>, ToDoTaskRepository>();
             builder.Services.AddScoped<IChekAuthorization<CustomList>, CustomListRepository>();
@@ -46,9 +53,7 @@ namespace MySecondProject
 
             builder.Services.AddSingleton<ValidOptions>();
 
-            builder.Services.AddHttpContextAccessor();
-
-            builder.Services.AddSwaggerGen(options =>
+                builder.Services.AddSwaggerGen(options =>
             {
                 //options.AddSecurityDefinition("JWT Bearer", new OpenApiSecurityScheme
                 //{
@@ -72,7 +77,6 @@ namespace MySecondProject
                 options.OperationFilter<AddODataQueryOptionParametersOperationFilter>();
             });
 
-            //builder.Services.AddScoped<ILoginRepository, LoginRepository>();
             builder.Services.AddScoped<ILoginService, LoginService>();        
             
             var connection = builder.Configuration.GetConnectionString("DefaultConnection");
@@ -82,9 +86,35 @@ namespace MySecondProject
                 b.MigrationsAssembly("List_Dal")),
                 ServiceLifetime.Transient);
 
+            builder.Services.AddHangfire(hangfire =>                                       
+            {
+                hangfire.SetDataCompatibilityLevel(CompatibilityLevel.Version_170);
+                hangfire.UseSimpleAssemblyNameTypeSerializer();
+                hangfire.UseRecommendedSerializerSettings();
+                hangfire.UseColouredConsoleLogProvider();
+                hangfire.UseSqlServerStorage(
+                    connection,
+                    new SqlServerStorageOptions
+                    {
+                        CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
+                        SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
+                        QueuePollInterval = TimeSpan.Zero,
+                        UseRecommendedIsolationLevel = true,
+                        DisableGlobalLocks = true
+                    });
+
+                var server = new BackgroundJobServer(new BackgroundJobServerOptions
+                {
+                    ServerName = "hangfire",
+                });
+
+                RecurringJob.AddOrUpdate<TaskRetentionPoleBackgroundTask>(x => x.Run(), Cron.Daily);
+                RecurringJob.AddOrUpdate<ListRetentionPoleBackgroundTask>(x => x.Run(), Cron.Daily);
+                RecurringJob.AddOrUpdate<UserRetentionPoleBackgroundTask>(x => x.Run(), Cron.Daily);
+            });
+          
             builder.Services.AddIdentity<User,IdentityRole<int>>(options => options.SignIn.RequireConfirmedAccount = true)
             .AddEntityFrameworkStores<ApplicationContext>();
-
 
             builder.Services.Configure<IdentityOptions>(options =>
             {
@@ -123,6 +153,8 @@ namespace MySecondProject
             app.UseAuthorization();
            
             app.MapControllers();
+
+            app.UseHangfireDashboard();
 
             app.Run();
         }

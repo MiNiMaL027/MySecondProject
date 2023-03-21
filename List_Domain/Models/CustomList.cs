@@ -6,7 +6,7 @@ namespace List_Domain.Models
     {
         public string Name { get; set; }
 
-        public bool IsDeleted { get; set; }
+        public DateTime? ArchivalDate { get; set; }
 
         public virtual List<ToDoTask>? Tasks { get; set; } = new List<ToDoTask>();
     }
