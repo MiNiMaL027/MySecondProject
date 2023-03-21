@@ -3,7 +3,6 @@ using List_Domain.Exeptions;
 using List_Domain.Models.NotDbEntity;
 using List_Service.Interfaces;
 using Microsoft.AspNetCore.Http;
-using System.Security.Claims;
 
 namespace List_Service.Services
 {
