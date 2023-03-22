@@ -6,8 +6,6 @@ using List_Service.Interfaces;
 using List_Service.Services.ValidOptions;
 using List_Service.Services;
 using Microsoft.AspNetCore.OData;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.EntityFrameworkCore;
 using List_Dal;
 using List_Service.Mapper;

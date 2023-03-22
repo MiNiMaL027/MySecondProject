@@ -31,7 +31,7 @@ namespace List_Service.Services
 
             if (result == null)
                 throw new LoginException();
-         
+
             if (result.RequiresTwoFactor)
                 throw new LoginException();
 

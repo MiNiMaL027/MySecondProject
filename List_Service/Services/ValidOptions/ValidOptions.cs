@@ -1,4 +1,6 @@
-﻿namespace List_Service.Services.ValidOptions
+﻿using List_Domain.Exeptions;
+
+namespace List_Service.Services.ValidOptions
 {
     public class ValidOptions
     {
@@ -7,7 +9,7 @@
         /// </summary>
         /// <param name="name"></param>
         /// <returns>True or False</returns>
-        public static bool ValidName(string name)
+        private static bool ValidName(string name)
         {
             if (name.Length <= 3 && name.Length >= 20)
                 return false;
