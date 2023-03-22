@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using List_Domain.CreateModel;
-using List_Domain.ModelDTO;
 using List_Domain.Models;
 using List_Domain.ViewModel;
 
@@ -21,8 +20,6 @@ namespace List_Service.Mapper
             CreateMap<ViewToDoTask, ToDoTask>().ReverseMap();
 
             CreateMap<CreateToDoTask, ToDoTask>().ReverseMap();
-
-            CreateMap<UserDTO, User>().ReverseMap();
 
             CreateMap<ViewSettings, Settings>().ReverseMap();
         }

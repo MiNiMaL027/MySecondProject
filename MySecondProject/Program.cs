@@ -33,26 +33,8 @@ namespace MySecondProject
 
             builder.Services.AddHttpContextAccessor();
 
-            builder.Services.AddScoped<IToDoTaskRepository, ToDoTaskRepository>();
-            builder.Services.AddScoped<ICustomListRepository, CustomListRepository>();
-            builder.Services.AddScoped<ISettingsRepository, SettingsRepository>();
-
-            builder.Services.AddScoped<ICustomListService, CustomListService>();
-            builder.Services.AddScoped<IToDoTaskService, ToDoTaskService>();
-            builder.Services.AddScoped<ISettingsService, SettingsService>();
-            builder.Services.AddScoped<IUserService, UserService>();             
-            builder.Services.AddScoped<ISendEmailService, SendEmailService>();             
-
-            builder.Services.AddScoped<IChekAuthorization<ToDoTask>, ToDoTaskRepository>();
-            builder.Services.AddScoped<IChekAuthorization<CustomList>, CustomListRepository>();
-            builder.Services.AddScoped<IChekAuthorization<Settings>, SettingsRepository>();
-
-            builder.Services.AddScoped<IAutorizationService<ToDoTask>, AutorizationService<ToDoTask>>();
-            builder.Services.AddScoped<IAutorizationService<CustomList>, AutorizationService<CustomList>>();
-            builder.Services.AddScoped<IAutorizationService<Settings>, AutorizationService<Settings>>();
-
-            builder.Services.AddSingleton<ValidOptions>();
-
+            builder.Services.AddDependencyInjectionServices();
+     
                 builder.Services.AddSwaggerGen(options =>
             {
                 //options.AddSecurityDefinition("JWT Bearer", new OpenApiSecurityScheme
